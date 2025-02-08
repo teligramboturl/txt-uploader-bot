@@ -175,14 +175,15 @@ async def upload(bot: Client, m: Message):
         MPH = highlighter 
     else:
         MPH = raw_text3
-    #await editable.edit("**Enter Your PW Token For 𝐌𝐏𝐃 𝐔𝐑𝐋  or send 'unknown' for use default**")
-    #input4: Message = await bot.listen(editable.chat.id)
-    #raw_text4 = input4.text
-    #await input4.delete(True)
-    #if raw_text4 == 'unknown':
-        #MR = token
-    #else:
-        #MR = raw_text4
+
+    await editable.edit("**𝐄𝐧𝐭𝐞𝐫 𝐘𝐨𝐮𝐫 𝐏𝐖 𝐓𝐨𝐤𝐞𝐧 𝐅𝐨𝐫 𝐌𝐏𝐃 𝐔𝐑𝐋 𝐨𝐫 𝐬𝐞𝐧𝐝 '𝐮𝐧𝐤𝐧𝐨𝐰𝐧' 𝐟𝐨𝐫 𝐮𝐬𝐞 𝐝𝐞𝐟𝐚𝐮𝐥𝐭**")
+    input4: Message = await bot.listen(editable.chat.id)
+    raw_text4 = input4.text
+    await input4.delete(True)
+    if raw_text4 == 'unknown':
+        MR = token
+    else:
+        MR = raw_text4
    
     await editable.edit("🌄 𝐍𝐨𝐰 𝐬𝐞𝐧𝐝 𝐭𝐡𝐞 𝐓𝐡𝐮𝐦𝐛 𝐔𝐑𝐋 \n 𝐄𝐠. » https://i.postimg.cc/d1JW4kb6/01.jpg \n 𝐎𝐫 𝐢𝐟 𝐝𝐨𝐧'𝐭 𝐰𝐚𝐧𝐭 𝐭𝐡𝐮𝐦𝐛𝐧𝐚𝐢𝐥 𝐬𝐞𝐧𝐝 = 𝐧𝐨")
     input6 = message = await bot.listen(editable.chat.id)

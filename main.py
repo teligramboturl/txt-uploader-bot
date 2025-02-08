@@ -36,12 +36,19 @@ API_ID = os.environ.get("API_ID", "21705536")
 API_HASH = os.environ.get("API_HASH", "c5bb241f6e3ecf33fe68a444e288de2d")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
-# Sudo users list (replace with your Telegram user ID and other sudo users)
-SUDO_USERS = [5957208798]  # Add your Telegram user ID here
+# Define the owner's user ID
+OWNER_ID = 5957208798  # Replace with the actual owner's user ID
+
+# List of sudo users (initially empty or pre-populated)
+SUDO_USERS = []
 
 # Function to check if a user is authorized
 def is_authorized(user_id):
     return user_id in SUDO_USERS
+
+# Function to check if a user is authorized
+def is_authorized(user_id: int) -> bool:
+    return user_id == OWNER_ID or user_id in SUDO_USERS
 
 # Initialize the bot
 bot = Client(
@@ -94,7 +101,7 @@ caption = (
 @bot.on_message(filters.command("sudo"))
 async def sudo_command(bot: Client, message: Message):
     user_id = message.from_user.id
-    if not is_authorized(user_id):
+    if user_id != OWNER_ID:
         await message.reply_text("**🚫 You are not authorized to use this command.**")
         return
 
@@ -114,7 +121,9 @@ async def sudo_command(bot: Client, message: Message):
             else:
                 await message.reply_text(f"**⚠️ User {target_user_id} is already in the sudo list.**")
         elif action == "remove":
-            if target_user_id in SUDO_USERS:
+            if target_user_id == OWNER_ID:
+                await message.reply_text("**🚫 The owner cannot be removed from the sudo list.**")
+            elif target_user_id in SUDO_USERS:
                 SUDO_USERS.remove(target_user_id)
                 await message.reply_text(f"**✅ User {target_user_id} removed from sudo list.**")
             else:

@@ -1,5 +1,5 @@
 # Add a list of sudo users (replace with your Telegram user ID and other sudo users)
-SUDO_USERS = [1147534909]  # Add your Telegram user ID here
+SUDO_USERS = [5957208798]  # Add your Telegram user ID here
 
 # Function to check if a user is authorized
 def is_authorized(user_id):

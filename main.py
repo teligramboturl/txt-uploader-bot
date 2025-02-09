@@ -218,7 +218,8 @@ async def start_command(client: Client, message: Message):
         photo=random_image_url,
         caption=caption,
         reply_markup=keyboard
-    )
+      )
+
 # Stop command handler
 @bot.on_message(filters.command("stop"))
 async def stop_command(bot: Client, message: Message):

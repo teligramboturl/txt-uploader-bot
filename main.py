@@ -219,6 +219,20 @@ def list_authorized(context: CallbackContext) -> None:
     )
     context.message.reply_text(response)
 
+def main() -> None:
+    updater = Updater(TOKEN)
+    dispatcher = updater.dispatcher
+
+    # Register command handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("add_channel", add_channel))
+    dispatcher.add_handler(CommandHandler("remove_channel", remove_channel))
+    dispatcher.add_handler(CommandHandler("add_user", add_user))
+    dispatcher.add_handler(CommandHandler("remove_user", remove_user))
+    dispatcher.add_handler(CommandHandler("add_group", add_group))
+    dispatcher.add_handler(CommandHandler("remove_group", remove_group))
+    dispatcher.add_handler(CommandHandler("list_authorized", list_authorized))
+
 # Upload command handler
 @bot.on_message(filters.command(["upload"]))
 async def upload(bot: Client, m: Message):

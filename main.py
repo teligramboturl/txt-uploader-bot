@@ -35,6 +35,16 @@ API_ID = os.environ.get("API_ID", "21705536")
 API_HASH = os.environ.get("API_HASH", "c5bb241f6e3ecf33fe68a444e288de2d")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
+#import os
+import random
+from pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+
+# Environment variables for API credentials
+API_ID = os.environ.get("API_ID", "21705536")
+API_HASH = os.environ.get("API_HASH", "c5bb241f6e3ecf33fe68a444e288de2d")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+
 # Initialize the bot
 bot = Client(
     "bot",
@@ -42,7 +52,6 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN
 )
-
 
 # Define the owner's user ID
 OWNER_ID = 5957208798  # Replace with the actual owner's user ID
@@ -55,6 +64,10 @@ authorized_groups = []
 # Check if a user is authorized
 def is_authorized(user_id: int) -> bool:
     return user_id == OWNER_ID or user_id in authorized_users
+
+# Check if a chat (channel/group) is authorized
+def is_chat_authorized(chat_id: int) -> bool:
+    return chat_id in authorized_channels or chat_id in authorized_groups
 
 # Authorize command to add/remove authorized channels, users, and groups
 @bot.on_message(filters.command("authorize"))
@@ -86,7 +99,7 @@ async def authorize_command(bot: Client, message: Message):
             elif action == "remove":
                 if target_id in authorized_channels:
                     authorized_channels.remove(target_id)
-                    await message.reply_text(f"**✅ Channel ID {target_id} has been removed.**")
+                    await message.reply_text(f"**➖ Channel ID {target_id} has been removed.**")
                 else:
                     await message.reply_text(f"**⚠️ Channel ID {target_id} is not in the authorized list.**")
             else:
@@ -100,9 +113,7 @@ async def authorize_command(bot: Client, message: Message):
                 else:
                     await message.reply_text(f"**⚠️ User ID {target_id} is already authorized.**")
             elif action == "remove":
-                if target_id == OWNER_ID:
-                    await message.reply_text("**🚫 The owner cannot be removed from the authorized list.**")
-                elif target_id in authorized_users:
+                if target_id in authorized_users:
                     authorized_users.remove(target_id)
                     await message.reply_text(f"**➖ User ID {target_id} has been removed.**")
                 else:
@@ -147,9 +158,6 @@ async def list_authorized_command(bot: Client, message: Message):
     )
     await message.reply_text(response)
 
-# Center the text dynamically based on terminal width
-centered_text = "◦•●◉✿ 𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚 ✿◉●•◦".center(40)
-
 # Inline keyboard for start command
 keyboard = InlineKeyboardMarkup(
     [
@@ -176,7 +184,6 @@ image_urls = [
 ]
 random_image_url = random.choice(image_urls)
 
-
 # Define the caption
 caption = (
     "**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫👋!**\n\n"
@@ -187,13 +194,9 @@ caption = (
     "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
 )
 
-# Check if a chat (channel/group) is authorized
-def is_chat_authorized(chat_id: int) -> bool:
-    return chat_id in authorized_channels or chat_id in authorized_groups
-
 # Start command handler
-@Client.on_message(filters.command(["start"]))
-async def start_command(client: Client, message: Message):
+@bot.on_message(filters.command(["start"]))
+async def start_command(bot: Client, message: Message):
     user_id = message.from_user.id
     chat_id = message.chat.id
 
@@ -207,10 +210,7 @@ async def start_command(client: Client, message: Message):
         await message.reply_text("**🚫 This chat is not authorized to use this bot.**")
         return
 
-    # Start command handler
-    @bot.on_message(filters.command(["start"]))
-    async def start_command(bot: Client, message: Message):
-        await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
+    await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
 
 # Stop command handler
 @bot.on_message(filters.command("stop"))

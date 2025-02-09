@@ -35,6 +35,15 @@ API_ID = os.environ.get("API_ID", "21705536")
 API_HASH = os.environ.get("API_HASH", "c5bb241f6e3ecf33fe68a444e288de2d")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
+# Initialize the bot
+bot = Client(
+    "bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
+
+
 # Define the owner's user ID
 OWNER_ID = 5957208798  # Replace with the actual owner's user ID
 
@@ -46,61 +55,6 @@ authorized_groups = []
 # Check if a user is authorized
 def is_authorized(user_id: int) -> bool:
     return user_id == OWNER_ID or user_id in authorized_users
-
-# Function to extract the title from the text file
-def extract_title(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        first_line = file.readline().strip()  # Read the first line and remove extra spaces
-        return first_line if first_line else "Untitled"  # Return "Untitled" if the file is empty
-
-
-# Initialize the bot
-bot = Client(
-    "bot",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
-)
-
-# Center the text dynamically based on terminal width
-centered_text = "◦•●◉✿ 𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚 ✿◉●•◦".center(40)
-
-# Inline keyboard for start command
-keyboard = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
-            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
-        ],
-        [
-            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
-        ],
-    ]
-)
-
-# Image URLs for the random image feature
-image_urls = [
-    "https://i.postimg.cc/t428ZHY7/02.webp",
-    "https://i.postimg.cc/6QkC6yLK/03.webp",
-    "https://i.postimg.cc/fbdNhHf8/04.webp",
-    "https://i.postimg.cc/yxMGnKwB/05.webp",
-    "https://i.postimg.cc/50ddnwvD/06.webp",
-    "https://i.postimg.cc/wT7zxT6f/07.webp",
-    "https://i.postimg.cc/pVk0GfM4/08.webp",
-    "https://i.postimg.cc/1tBLrbKY/09.webp",
-]
-random_image_url = random.choice(image_urls)
-
-
-# Define the caption
-caption = (
-    "**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫👋!**\n\n"
-    "➠ **𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ♥️**\n"
-    "➠ **Can Extract Videos & PDFs From Your Text File and Upload to Telegram!**\n"
-    "➠ **For Guide Use Command /guide 📖**\n"
-    "➠ **Use /Upload Command to Download From TXT File** 📄\n"
-    "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
-)
 
 # Authorize command to add/remove authorized channels, users, and groups
 @bot.on_message(filters.command("authorize"))
@@ -192,6 +146,46 @@ async def list_authorized_command(bot: Client, message: Message):
         f"**Authorized Groups:** {', '.join(map(str, authorized_groups)) or 'None'}"
     )
     await message.reply_text(response)
+
+# Center the text dynamically based on terminal width
+centered_text = "◦•●◉✿ 𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚 ✿◉●•◦".center(40)
+
+# Inline keyboard for start command
+keyboard = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
+            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
+        ],
+        [
+            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
+        ],
+    ]
+)
+
+# Image URLs for the random image feature
+image_urls = [
+    "https://i.postimg.cc/t428ZHY7/02.webp",
+    "https://i.postimg.cc/6QkC6yLK/03.webp",
+    "https://i.postimg.cc/fbdNhHf8/04.webp",
+    "https://i.postimg.cc/yxMGnKwB/05.webp",
+    "https://i.postimg.cc/50ddnwvD/06.webp",
+    "https://i.postimg.cc/wT7zxT6f/07.webp",
+    "https://i.postimg.cc/pVk0GfM4/08.webp",
+    "https://i.postimg.cc/1tBLrbKY/09.webp",
+]
+random_image_url = random.choice(image_urls)
+
+
+# Define the caption
+caption = (
+    "**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫👋!**\n\n"
+    "➠ **𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ♥️**\n"
+    "➠ **Can Extract Videos & PDFs From Your Text File and Upload to Telegram!**\n"
+    "➠ **For Guide Use Command /guide 📖**\n"
+    "➠ **Use /Upload Command to Download From TXT File** 📄\n"
+    "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
+)
 
 # Check if a chat (channel/group) is authorized
 def is_chat_authorized(chat_id: int) -> bool:

@@ -198,10 +198,10 @@ async def upload(bot: Client, m: Message):
     raw_text = input0.text
     await input0.delete(True)
 
-    await editable.edit("**∝ 𝐍𝐨𝐰 𝐏𝐥𝐞𝐚𝐬𝐞 𝐒𝐞𝐧𝐝 𝐌𝐞 𝐘𝐨𝐮𝐫 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞**")
-    input1: Message = await bot.listen(editable.chat.id)
-    raw_text0 = input1.text
-    await input1.delete(True)
+    #await editable.edit("**∝ 𝐍𝐨𝐰 𝐏𝐥𝐞𝐚𝐬𝐞 𝐒𝐞𝐧𝐝 𝐌𝐞 𝐘𝐨𝐮𝐫 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞**")
+    #input1: Message = await bot.listen(editable.chat.id)
+    #raw_text0 = input1.text
+    #await input1.delete(True)
 
     await editable.edit("**∝ 🎬 𝐄𝐧𝐭𝐞𝐫 𝐑𝐞𝐬𝐨𝐥𝐮𝐭𝐢𝐨𝐧 \n➤ 𝟏𝟒𝟒ᴘ - 𝐬ᴇɴᴅ 144 \n ➤ 𝟐𝟒𝟎ᴘ - 𝐬ᴇɴᴅ 240 \n ➤ 𝟑𝟔𝟎ᴘ - 𝐬ᴇɴᴅ 360 \n ➤ 𝟒𝟖𝟎ᴘ - 𝐬ᴇɴᴅ 480 \n ➤ 𝟕𝟐𝟎ᴘ - 𝐬ᴇɴᴅ 720 \n ➤ 𝟏𝟎𝟖𝟎ᴘ - 𝐬ᴇɴᴅ 1080 **")
     input2: Message = await bot.listen(editable.chat.id)

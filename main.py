@@ -167,19 +167,13 @@ async def restart_handler(_, m: Message):
 # Upload command handler
 @bot.on_message(filters.command(["upload"]))
 async def upload(bot: Client, m: Message):
-    if not is_authorized(m.from_user.id):
-        await m.reply_text("**🚫 You are not authorized to use this bot.**")
-        return
-
     editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()
     await input.delete(True)
 
     path = f"./downloads/{m.chat.id}"
-    # Extract the title
-    raw_text0= extract_title(path)
-    
+
     try:
         with open(x, "r") as f:
             content = f.read()
@@ -187,9 +181,11 @@ async def upload(bot: Client, m: Message):
         links = []
         for i in content:
             links.append(i.split("://", 1))
-        os.remove(x)
-    except:
-        await m.reply_text("**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.**")
+        
+        # Extract the title from the file name
+        file_name = os.path.basename(x)  # Get the file name from the path
+        raw_text0 = os.path.splitext(file_name)[0]  # Remove the file extension to get the title
+        
         os.remove(x)
         return
 

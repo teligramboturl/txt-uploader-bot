@@ -213,12 +213,13 @@ async def start_command(client: Client, message: Message):
         await message.reply_text("**🚫 This chat is not authorized to use this bot.**")
         return
 
-      await bot.send_photo(
+    # Send a photo with a caption and keyboard
+    await client.send_photo(
         chat_id=message.chat.id,
         photo=random_image_url,
         caption=caption,
         reply_markup=keyboard
-      )
+    )
 
 # Stop command handler
 @bot.on_message(filters.command("stop"))

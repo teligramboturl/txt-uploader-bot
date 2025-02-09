@@ -44,13 +44,9 @@ authorized_channels = []
 authorized_users = []
 authorized_groups = []
 
-# Function to check if a user is authorized
-def is_authorized(user_id):
-    return user_id in SUDO_USERS
-
-# Function to check if a user is authorized
+# Check if a user is authorized
 def is_authorized(user_id: int) -> bool:
-    return user_id == OWNER_ID or user_id in SUDO_USERS
+    return user_id == OWNER_ID or user_id in authorized_users
 
 # Function to extract the title from the text file
 def extract_title(file_path):
@@ -106,132 +102,115 @@ caption = (
     "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
 )
 
-# Check if the user is the bot owner
-def is_owner(context: CallbackContext) -> bool:
-    return context.message.from_user.id == OWNER_ID
-
-# Command to add a channel ID to the authorized list
-def add_channel(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
+# Authorize command to add/remove authorized channels, users, and groups
+@bot.on_message(filters.command("authorize"))
+async def authorize_command(bot: Client, message: Message):
+    user_id = message.from_user.id
+    if user_id != OWNER_ID:
+        await message.reply_text("**🚫 You are not authorized to use this command.**")
         return
 
     try:
-        channel_id = int(context.args[0])  # Get the channel ID from the command arguments
-        if channel_id not in authorized_channels:
-            authorized_channels.append(channel_id)
-            context.message.reply_text(f"✅ Channel ID {channel_id} has been authorized.")
+        args = message.text.split(" ", 3)
+        if len(args) < 3:
+            await message.reply_text("**Usage:** `/authorize <type> <action> <id>`\n\n"
+                                   "**Types:** `channel`, `user`, `group`\n"
+                                   "**Actions:** `add`, `remove`")
+            return
+
+        auth_type = args[1].lower()
+        action = args[2].lower()
+        target_id = int(args[3])
+
+        if auth_type == "channel":
+            if action == "add":
+                if target_id not in authorized_channels:
+                    authorized_channels.append(target_id)
+                    await message.reply_text(f"**✅ Channel ID {target_id} has been authorized.**")
+                else:
+                    await message.reply_text(f"**⚠️ Channel ID {target_id} is already authorized.**")
+            elif action == "remove":
+                if target_id in authorized_channels:
+                    authorized_channels.remove(target_id)
+                    await message.reply_text(f"**✅ Channel ID {target_id} has been removed.**")
+                else:
+                    await message.reply_text(f"**⚠️ Channel ID {target_id} is not in the authorized list.**")
+            else:
+                await message.reply_text("**Invalid action. Use `add` or `remove`.**")
+
+        elif auth_type == "user":
+            if action == "add":
+                if target_id not in authorized_users:
+                    authorized_users.append(target_id)
+                    await message.reply_text(f"**✅ User ID {target_id} has been authorized.**")
+                else:
+                    await message.reply_text(f"**⚠️ User ID {target_id} is already authorized.**")
+            elif action == "remove":
+                if target_id == OWNER_ID:
+                    await message.reply_text("**🚫 The owner cannot be removed from the authorized list.**")
+                elif target_id in authorized_users:
+                    authorized_users.remove(target_id)
+                    await message.reply_text(f"**✅ User ID {target_id} has been removed.**")
+                else:
+                    await message.reply_text(f"**⚠️ User ID {target_id} is not in the authorized list.**")
+            else:
+                await message.reply_text("**Invalid action. Use `add` or `remove`.**")
+
+        elif auth_type == "group":
+            if action == "add":
+                if target_id not in authorized_groups:
+                    authorized_groups.append(target_id)
+                    await message.reply_text(f"**✅ Group ID {target_id} has been authorized.**")
+                else:
+                    await message.reply_text(f"**⚠️ Group ID {target_id} is already authorized.**")
+            elif action == "remove":
+                if target_id in authorized_groups:
+                    authorized_groups.remove(target_id)
+                    await message.reply_text(f"**✅ Group ID {target_id} has been removed.**")
+                else:
+                    await message.reply_text(f"**⚠️ Group ID {target_id} is not in the authorized list.**")
+            else:
+                await message.reply_text("**Invalid action. Use `add` or `remove`.**")
+
         else:
-            context.message.reply_text(f"ℹ️ Channel ID {channel_id} is already authorized.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /add_channel <channel_id>")
+            await message.reply_text("**Invalid type. Use `channel`, `user`, or `group`.**")
 
-# Command to remove a channel ID from the authorized list
-def remove_channel(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
-        return
+    except Exception as e:
+        await message.reply_text(f"**Error:** {str(e)}")
 
-    try:
-        channel_id = int(context.args[0])  # Get the channel ID from the command arguments
-        if channel_id in authorized_channels:
-            authorized_channels.remove(channel_id)
-            context.message.reply_text(f"✅ Channel ID {channel_id} has been removed.")
-        else:
-            context.message.reply_text(f"ℹ️ Channel ID {channel_id} is not in the authorized list.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /remove_channel <channel_id>")
-
-# Command to add a user ID to the authorized list
-def add_user(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
-        return
-
-    try:
-        user_id = int(context.args[0])  # Get the user ID from the command arguments
-        if user_id not in authorized_users:
-            authorized_users.append(user_id)
-            context.message.reply_text(f"✅ User ID {user_id} has been authorized.")
-        else:
-            context.message.reply_text(f"ℹ️ User ID {user_id} is already authorized.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /add_user <user_id>")
-
-# Command to remove a user ID from the authorized list
-def remove_user(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
-        return
-
-    try:
-        user_id = int(context.args[0])  # Get the user ID from the command arguments
-        if user_id in authorized_users:
-            authorized_users.remove(user_id)
-            context.message.reply_text(f"✅ User ID {user_id} has been removed.")
-        else:
-            context.message.reply_text(f"ℹ️ User ID {user_id} is not in the authorized list.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /remove_user <user_id>")
-
-# Command to add a group ID to the authorized list
-def add_group(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
-        return
-
-    try:
-        group_id = int(context.args[0])  # Get the group ID from the command arguments
-        if group_id not in authorized_groups:
-            authorized_groups.append(group_id)
-            context.message.reply_text(f"✅ Group ID {group_id} has been authorized.")
-        else:
-            context.message.reply_text(f"ℹ️ Group ID {group_id} is already authorized.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /add_group <group_id>")
-
-# Command to remove a group ID from the authorized list
-def remove_group(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
-        return
-
-    try:
-        group_id = int(context.args[0])  # Get the group ID from the command arguments
-        if group_id in authorized_groups:
-            authorized_groups.remove(group_id)
-            context.message.reply_text(f"✅ Group ID {group_id} has been removed.")
-        else:
-            context.message.reply_text(f"ℹ️ Group ID {group_id} is not in the authorized list.")
-    except (IndexError, ValueError):
-        context.message.reply_text("❌ Usage: /remove_group <group_id>")
-
-# Command to list all authorized channels, users, and groups
-def list_authorized(context: CallbackContext) -> None:
-    if not is_owner(context):
-        context.message.reply_text("🚫 You are not authorized to use this command.")
+# List authorized channels, users, and groups
+@bot.on_message(filters.command("list_authorized"))
+async def list_authorized_command(bot: Client, message: Message):
+    user_id = message.from_user.id
+    if user_id != OWNER_ID:
+        await message.reply_text("**🚫 You are not authorized to use this command.**")
         return
 
     response = (
-        f"Authorized Channels: {', '.join(map(str, authorized_channels)) or 'None'}\n"
-        f"Authorized Users: {', '.join(map(str, authorized_users)) or 'None'}\n"
-        f"Authorized Groups: {', '.join(map(str, authorized_groups)) or 'None'}"
+        f"**Authorized Channels:** {', '.join(map(str, authorized_channels)) or 'None'}\n"
+        f"**Authorized Users:** {', '.join(map(str, authorized_users)) or 'None'}\n"
+        f"**Authorized Groups:** {', '.join(map(str, authorized_groups)) or 'None'}"
     )
-    context.message.reply_text(response)
+    await message.reply_text(response)
 
-def main() -> None:
-    updater = Updater(TOKEN)
-    dispatcher = updater.dispatcher
+# Start command handler
+@bot.on_message(filters.command("start"))
+async def start_command(bot: Client, message: Message):
+    if not is_authorized(message.from_user.id):
+        await message.reply_text("**🚫 You are not authorized to use this bot.**")
+        return
 
-    # Register command handlers
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("add_channel", add_channel))
-    dispatcher.add_handler(CommandHandler("remove_channel", remove_channel))
-    dispatcher.add_handler(CommandHandler("add_user", add_user))
-    dispatcher.add_handler(CommandHandler("remove_user", remove_user))
-    dispatcher.add_handler(CommandHandler("add_group", add_group))
-    dispatcher.add_handler(CommandHandler("remove_group", remove_group))
-    dispatcher.add_handler(CommandHandler("list_authorized", list_authorized))
+    await message.reply_text("**Welcome! You are authorized to use this bot.**")
+
+# Stop command handler
+@bot.on_message(filters.command("stop"))
+async def stop_command(bot: Client, message: Message):
+    if not is_authorized(message.from_user.id):
+        await message.reply_text("**🚫 You are not authorized to use this bot.**")
+        return
+
+    await message.reply_text("**Bot stopped.** 🚦")
+    os.execl(sys.executable, sys.executable, *sys.argv)
 
 # Upload command handler
 @bot.on_message(filters.command(["upload"]))

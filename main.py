@@ -50,6 +50,13 @@ def is_authorized(user_id):
 def is_authorized(user_id: int) -> bool:
     return user_id == OWNER_ID or user_id in SUDO_USERS
 
+# Function to extract the title from the text file
+def extract_title(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        first_line = file.readline().strip()  # Read the first line and remove extra spaces
+        return first_line if first_line else "Untitled"  # Return "Untitled" if the file is empty
+
+
 # Initialize the bot
 bot = Client(
     "bot",
@@ -170,7 +177,9 @@ async def upload(bot: Client, m: Message):
     await input.delete(True)
 
     path = f"./downloads/{m.chat.id}"
-
+    # Extract the title
+    raw_text0= extract_title(path)
+    
     try:
         with open(x, "r") as f:
             content = f.read()

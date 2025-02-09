@@ -150,7 +150,7 @@ async def authorize_command(bot: Client, message: Message):
                     await message.reply_text("**🚫 The owner cannot be removed from the authorized list.**")
                 elif target_id in authorized_users:
                     authorized_users.remove(target_id)
-                    await message.reply_text(f"**✅ User ID {target_id} has been removed.**")
+                    await message.reply_text(f"**➖ User ID {target_id} has been removed.**")
                 else:
                     await message.reply_text(f"**⚠️ User ID {target_id} is not in the authorized list.**")
             else:
@@ -166,7 +166,7 @@ async def authorize_command(bot: Client, message: Message):
             elif action == "remove":
                 if target_id in authorized_groups:
                     authorized_groups.remove(target_id)
-                    await message.reply_text(f"**✅ Group ID {target_id} has been removed.**")
+                    await message.reply_text(f"**➖ Group ID {target_id} has been removed.**")
                 else:
                     await message.reply_text(f"**⚠️ Group ID {target_id} is not in the authorized list.**")
             else:
@@ -193,15 +193,32 @@ async def list_authorized_command(bot: Client, message: Message):
     )
     await message.reply_text(response)
 
+# Check if a chat (channel/group) is authorized
+def is_chat_authorized(chat_id: int) -> bool:
+    return chat_id in authorized_channels or chat_id in authorized_groups
+
 # Start command handler
-@bot.on_message(filters.command("start"))
-async def start_command(bot: Client, message: Message):
-    if not is_authorized(message.from_user.id):
+@Client.on_message(filters.command(["start"]))
+async def start_command(client: Client, message: Message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+
+    # Check if the user is authorized
+    if not is_authorized(user_id):
         await message.reply_text("**🚫 You are not authorized to use this bot.**")
         return
 
-    await message.reply_text("**Welcome! You are authorized to use this bot.**")
+    # Check if the chat (channel/group) is authorized
+    if message.chat.type in ["channel", "group", "supergroup"] and not is_chat_authorized(chat_id):
+        await message.reply_text("**🚫 This chat is not authorized to use this bot.**")
+        return
 
+      await bot.send_photo(
+        chat_id=message.chat.id,
+        photo=random_image_url,
+        caption=caption,
+        reply_markup=keyboard
+    )
 # Stop command handler
 @bot.on_message(filters.command("stop"))
 async def stop_command(bot: Client, message: Message):

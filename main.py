@@ -400,7 +400,7 @@ async def upload(bot: Client, m: Message):
             #physicswallah
             elif '/master.mpd' in url:
              vid_id =  url.split("/")[-2]
-                url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"
+            url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"
 
             if "/master.mpd" in url :
                 if "https://sec1.pw.live/" in url:

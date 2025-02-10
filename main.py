@@ -390,6 +390,7 @@ async def upload(bot: Client, m: Message):
                     
                 elif 'Key-Pair-Id' in url:
                     url = None
+                    
             elif '.m3u8' in url:
             q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
             x = url.split("/")[5]
@@ -397,6 +398,7 @@ async def upload(bot: Client, m: Message):
             url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
 
             #physicswallah
+            
             elif '/master.mpd' in url:
              vid_id =  url.split("/")[-2]
                 url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"

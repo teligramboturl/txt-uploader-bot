@@ -391,11 +391,11 @@ async def upload(bot: Client, m: Message):
                 elif 'Key-Pair-Id' in url:
                     url = None
                     
-            elif '.m3u8' in url:
-            q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
-            x = url.split("/")[5]
-            x = url.replace(x, "")
-            url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
+                elif '.m3u8' in url:
+                    q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
+                    x = url.split("/")[5]
+                    x = url.replace(x, "")
+                    url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
 
             #physicswallah
             

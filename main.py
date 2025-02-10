@@ -390,11 +390,11 @@ async def upload(bot: Client, m: Message):
                     
                 elif 'Key-Pair-Id' in url:
                     url = None
-                    elif '.m3u8' in url:
-                    q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
-                    x = url.split("/")[5]
-                    x = url.replace(x, "")
-                    url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
+            elif '.m3u8' in url:
+            q = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).split("/")[0]
+            x = url.split("/")[5]
+            x = url.replace(x, "")
+            url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
 
             #physicswallah
             elif '/master.mpd' in url:
@@ -496,67 +496,69 @@ async def upload(bot: Client, m: Message):
                 cc = f'**🎞️ 𝐕𝐈𝐃_𝐈𝐃: {str(count).zfill(3)}.\n\n📄 𝐓𝐢𝐭𝐥𝐞: {name1} .mkv\n📚 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞 » {raw_text0}\n📥 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐝 𝐁𝐲 » {MPH}**\n\n**{centered_text}**'
                 cc1 = f'**📁 𝐏𝐃𝐅_𝐈𝐃: {str(count).zfill(3)}.\n\n📄 𝐓𝐢𝐭𝐥𝐞: {name1} .pdf\n📚 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞 » {raw_text0}\n📥 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐝 𝐁𝐲 » {MPH}**\n\n{centered_text}**'
                 if "drive" in url:
-                    try:
-                        ka = await helper.download(url, name)
-                        copy = await bot.send_document(chat_id=m.chat.id,document=ka, caption=cc1)
-                        count+=1
-                        os.remove(ka)
-                        time.sleep(1)
-                    except FloodWait as e:
-                        await m.reply_text(str(e))
-                        time.sleep(e.x)
-                        continue
+
                 
-                elif ".pdf" in url:
-                    try:
-                        cmd = f'yt-dlp -o "{name}.pdf" "{url}"'
-                        download_cmd = f"{cmd} -R 25 --fragment-retries 25"
-                        os.system(download_cmd)
+                try:
+                    ka = await helper.download(url, name)
+                    copy = await bot.send_document(chat_id=m.chat.id,document=ka, caption=cc1)
+                    count+=1
+                    os.remove(ka)
+                    time.sleep(1)
+                except FloodWait as e:
+                    await m.reply_text(str(e))
+                    time.sleep(e.x)
+                    continue
+            
+            elif ".pdf" in url:
+                try:
+                    cmd = f'yt-dlp -o "{name}.pdf" "{url}"'
+                    download_cmd = f"{cmd} -R 25 --fragment-retries 25"
+                    os.system(download_cmd)
+                    copy = await bot.send_document(chat_id=m.chat.id, document=f'{name}.pdf', caption=cc1)
+                    count += 1
+                    os.remove(f'{name}.pdf')
+                except FloodWait as e:
+                    await m.reply_text(str(e))
+                    time.sleep(e.x)
+                    continue
+
+            elif ".pdf" in url:
+                try:
+                    await asyncio.sleep(4)
+                    # Replace spaces with %20 in the URL
+                    url = url.replace(" ", "%20")
+
+                    # Create a cloudscraper session
+                    scraper = cloudscraper.create_scraper()
+
+                    # Send a GET request to download the PDF
+                    response = scraper.get(url)
+
+                    # Check if the response status is OK
+                    if response.status_code == 200:
+                        # Write the PDF content to a file
+                        with open(f'{name}.pdf', 'wb') as file:
+                            file.write(response.content)
+
+                        # Send the PDF document
+                        await asyncio.sleep(4)
                         copy = await bot.send_document(chat_id=m.chat.id, document=f'{name}.pdf', caption=cc1)
                         count += 1
+
+                        # Remove the PDF file after sending
                         os.remove(f'{name}.pdf')
-                    except FloodWait as e:
-                        await m.reply_text(str(e))
-                        time.sleep(e.x)
-                        continue
+                    else:
+                        await m.reply_text(f"Failed to download PDF: {response.status_code} {response.reason}")
 
-                elif ".pdf" in url:
-                    try:
-                        await asyncio.sleep(4)
-                        # Replace spaces with %20 in the URL
-                        url = url.replace(" ", "%20")
- 
-                        # Create a cloudscraper session
-                        scraper = cloudscraper.create_scraper()
+                except FloodWait as e:
+                    await m.reply_text(str(e))
+                    await asyncio.sleep(2)  # Use asyncio.sleep for non-blocking sleep
+                    return  # Exit the function to avoid continuation
 
-                        # Send a GET request to download the PDF
-                        response = scraper.get(url)
-
-                        # Check if the response status is OK
-                        if response.status_code == 200:
-                            # Write the PDF content to a file
-                            with open(f'{name}.pdf', 'wb') as file:
-                                file.write(response.content)
-
-                            # Send the PDF document
-                            await asyncio.sleep(4)
-                            copy = await bot.send_document(chat_id=m.chat.id, document=f'{name}.pdf', caption=cc1)
-                            count += 1
-
-                            # Remove the PDF file after sending
-                            os.remove(f'{name}.pdf')
-                        else:
-                            await m.reply_text(f"Failed to download PDF: {response.status_code} {response.reason}")
-
-                    except FloodWait as e:
-                        await m.reply_text(str(e))
-                        await asyncio.sleep(2)  # Use asyncio.sleep for non-blocking sleep
-                        return  # Exit the function to avoid continuation
-
-                    except Exception as e:
-                        await m.reply_text(f"An error occurred: {str(e)}")
-                        await asyncio.sleep(4)  # You can replace this with more specific
-                        continue
+                except Exception as e:
+                    await m.reply_text(f"An error occurred: {str(e)}")
+                    await asyncio.sleep(4)  # You can replace this with more specific
+                    continue
                 else:
                     Show = f"**❊⟱ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 ⟱❊... »**\n\n**📝 𝐍𝐚𝐦𝐞 »** `{name}\n**❄ 𝐐𝐮𝐚𝐥𝐢𝐭𝐲 » {raw_text2}`\n**🔗𝐔𝐑𝐋 »** `[Hidden]`\n\n{centered_text}**"
                     prog = await m.reply_text(Show)

@@ -147,6 +147,17 @@ async def guide_handler(client: Client, message: Message):
     )
     await message.reply_text(guide_text)
 
+# Admin-only decorator
+def admin_only(func):
+    @wraps(func)
+    async def wrapper(client, message: Message, *args, **kwargs):
+        user_id = message.from_user.id
+        if user_id == YOUR_ADMIN_ID:
+            return await func(client, message, *args, **kwargs)
+        else:
+            await message.reply_text("❌ You are not authorized to use this command.")
+    return wrapper
+
 @bot.on_message(filters.command("adduser") & filters.private)
 @admin_only
 async def add_user(client, message: Message):

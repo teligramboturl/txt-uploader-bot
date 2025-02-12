@@ -13,35 +13,15 @@ import m3u8
 import random
 import yt_dlp
 from yt_dlp import YoutubeDL
-import yt_dlp as youtube_dl
-import cloudscraper
-import m3u8
-import core as helper
-from utils import progress_bar
-from vars import API_ID, API_HASH, BOT_TOKEN
 from aiohttp import ClientSession
-from pyromod import listen
-from subprocess import getstatusoutput
-from pytube import YouTube
-from pyrogram import Client, filters
-from pyrogram.types import Message
-from pyrogram.errors import FloodWait
-from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
-from pyrogram.types.messages_and_media import message
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-# Center the text dynamically based on terminal width
-centered_text = "◦•●◉✿ 𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚 ✿◉●•◦".center(40)
-
-# Environment variables for API credentials
-API_ID = os.environ.get("API_ID", "21705536")
-API_HASH = os.environ.get("API_HASH", "c5bb241f6e3ecf33fe68a444e288de2d")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-
-#import os
-import random
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import FloodWait
+from utils import progress_bar
+from vars import API_ID, API_HASH, BOT_TOKEN
+
+# Centered text for display
+centered_text = "◦•●◉✿ 𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚 ✿◉●•◦".center(40)
 
 # Environment variables for API credentials
 API_ID = os.environ.get("API_ID", "21705536")
@@ -55,25 +35,11 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN
 )
-async def start_bot():
-    await bot.start()
-    print("Bot is up and running")
 
-async def stop_bot():
-    await bot.stop()
-
-# Inline keyboard for start command
-keyboard = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
-            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
-        ],
-        [
-            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
-        ],
-    ]
-)
+# File paths
+SUBSCRIPTION_FILE = "subscription_data.txt"
+CHANNELS_FILE = "channels_data.json"
+YOUR_ADMIN_ID = 5957208798
 
 # Image URLs for the random image feature
 image_urls = [
@@ -98,16 +64,20 @@ caption = (
     "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
 )
 
-# Start command handler
-@bot.on_message(filters.command(["start"]))
-async def start_command(bot: Client, message: Message):
-    await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
-    
-# File paths
-SUBSCRIPTION_FILE = "subscription_data.txt"
-CHANNELS_FILE = "channels_data.json"
-YOUR_ADMIN_ID = 5957208798
-@admin_only = "YOUR_ADMIN_ID"
+# Inline keyboard for start command
+keyboard = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
+            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
+        ],
+        [
+            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
+        ],
+    ]
+)
+
+# Helper functions for file operations
 def read_subscription_data():
     if not os.path.exists(SUBSCRIPTION_FILE):
         return []
@@ -132,6 +102,12 @@ def write_channels_data(data):
 def is_admin(user_id):
     return user_id == YOUR_ADMIN_ID
 
+# Start command handler
+@bot.on_message(filters.command(["start"]))
+async def start_command(bot: Client, message: Message):
+    await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
+
+# Guide command handler
 @bot.on_message(filters.command("guide"))
 async def guide_handler(client: Client, message: Message):
     guide_text = (
@@ -147,9 +123,12 @@ async def guide_handler(client: Client, message: Message):
     )
     await message.reply_text(guide_text)
 
+# Add user command handler
 @bot.on_message(filters.command("adduser") & filters.private)
-@admin_only
 async def add_user(client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to use this command.")
+        return
     try:
         _, user_id, expiration_date = message.text.split()
         subscription_data = read_subscription_data()
@@ -159,9 +138,12 @@ async def add_user(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /adduser <user_id> <expiration_date>")
 
+# Remove user command handler
 @bot.on_message(filters.command("removeuser") & filters.private)
-@admin_only
 async def remove_user(client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to use this command.")
+        return
     try:
         _, user_id = message.text.split()
         subscription_data = read_subscription_data()
@@ -171,10 +153,10 @@ async def remove_user(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /removeuser <user_id>")
 
+# Show users command handler
 @bot.on_message(filters.command("users") & filters.private)
 async def show_users(client, message: Message):
-    user_id = message.from_user.id
-    if not is_admin(user_id):
+    if not is_admin(message.from_user.id):
         await message.reply_text("❌ You are not authorized to use this command.")
         return
     subscription_data = read_subscription_data()
@@ -184,6 +166,7 @@ async def show_users(client, message: Message):
     else:
         await message.reply_text("ℹ️ No users found in the subscription data.")
 
+# My plan command handler
 @bot.on_message(filters.command("myplan") & filters.private)
 async def my_plan(client, message: Message):
     user_id = str(message.from_user.id)
@@ -196,6 +179,7 @@ async def my_plan(client, message: Message):
     else:
         await message.reply_text("**❌ You are not a premium user.**")
 
+# Add channel command handler
 @bot.on_message(filters.command("add_channel"))
 async def add_channel(client, message: Message):
     user_id = str(message.from_user.id)
@@ -215,6 +199,7 @@ async def add_channel(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /add_channel <channel_id>")
 
+# Remove channel command handler
 @bot.on_message(filters.command("remove_channel"))
 async def remove_channel(client, message: Message):
     user_id = str(message.from_user.id)
@@ -234,10 +219,10 @@ async def remove_channel(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /remove_channels <channel_id>")
 
+# Allowed channels command handler
 @bot.on_message(filters.command("allowed_channels"))
 async def allowed_channels(client, message: Message):
-    user_id = message.from_user.id
-    if not is_admin(user_id):
+    if not is_admin(message.from_user.id):
         await message.reply_text("❌ You are not authorized to use this command.")
         return
     channels = read_channels_data()
@@ -247,15 +232,16 @@ async def allowed_channels(client, message: Message):
     else:
         await message.reply_text("ℹ️ No channels are currently allowed.")
 
+# Remove all channels command handler
 @bot.on_message(filters.command("remove_all_channels"))
 async def remove_all_channels(client, message: Message):
-    user_id = message.from_user.id
-    if not is_admin(user_id):
+    if not is_admin(message.from_user.id):
         await message.reply_text("❌ You are not authorized to use this command.")
         return
     write_channels_data([])
     await message.reply_text("✅ **All channels have been removed successfully.**")
 
+# Stop command handler
 @bot.on_message(filters.command("stop"))
 async def stop_handler(client, message: Message):
     if message.chat.type == "private":
@@ -272,6 +258,7 @@ async def stop_handler(client, message: Message):
     await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
+# Engineer command handler
 @bot.on_message(filters.command("Engineer"))
 async def moni_handler(client: Client, message: Message):
     if message.chat.type == "private":
@@ -286,20 +273,16 @@ async def moni_handler(client: Client, message: Message):
             await message.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
 
-# Upload command handler
-@bot.on_message(filters.command(["Engineer"]))
-async def upload(bot: Client, m: Message):
-    editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
+    editable = await message.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()
     await input.delete(True)
 
-    path = f"./downloads/{m.chat.id}"
+    path = f"./downloads/{message.chat.id}"
 
     try:
-        # Extract the file name without extension
-        file_name = os.path.basename(x)  # Get the file name from the path
-        raw_text0 = os.path.splitext(file_name)[0]  # Remove the file extension
+        file_name = os.path.basename(x)
+        raw_text0 = os.path.splitext(file_name)[0]
 
         with open(x, "r") as f:
             content = f.read()
@@ -308,17 +291,12 @@ async def upload(bot: Client, m: Message):
         for i in content:
             links.append(i.split("://", 1))
 
-        # Print or use raw_text0 for further processing
         print(f"Extracted file name: {raw_text0}")
 
-        # Continue with the rest of the logic
-        # (e.g., processing links, etc.)
-
-        # Clean up the downloaded file
         os.remove(x)
 
     except Exception as e:
-        await m.reply_text(f"**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: {str(e)}**")
+        await message.reply_text(f"**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: {str(e)}**")
         os.remove(x)
         return
         
@@ -330,11 +308,10 @@ async def upload(bot: Client, m: Message):
     await editable.edit("**∝ 𝐍𝐨𝐰 𝐏𝐥𝐞𝐚𝐬𝐞 𝐒𝐞𝐧𝐝 𝐌𝐞 𝐘𝐨𝐮𝐫 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞\n𝐨𝐫 𝐂 𝐭𝐨 𝐜𝐨𝐩𝐲 𝐟𝐫𝐨𝐦 𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝 𝐟𝐢𝐥𝐞**")
     input1: Message = await bot.listen(editable.chat.id)
     
-    # Check if the input is "C" to copy from raw_text0
     if input1.text.strip().lower() == "c":
-        raw_text0 = raw_text0  # Use the existing value of raw_text0
+        raw_text0 = raw_text0
     else:
-        raw_text0 = input1.text  # Use the user's input
+        raw_text0 = input1.text
     
     await input1.delete(True)
 

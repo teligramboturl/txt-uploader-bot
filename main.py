@@ -76,6 +76,8 @@ keyboard = InlineKeyboardMarkup(
     ]
 )
 
+ADMIN_ID = 5957208798
+
 # Function to check if the user is admin
 def is_admin(user_id):
     return user_id == ADMIN_ID

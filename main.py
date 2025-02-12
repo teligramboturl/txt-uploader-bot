@@ -39,6 +39,7 @@ bot = Client(
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
 CHANNELS_FILE = "channels_data.json"
+ADMIN_ID = 5957208798
 
 # Image URLs for the random image feature
 image_urls = [
@@ -76,19 +77,14 @@ keyboard = InlineKeyboardMarkup(
     ]
 )
 
-ADMIN_ID = 5957208798
-
+# Start command handler
+@bot.on_message(filters.command(["start"]))
+async def start_command(bot: Client, message: Message):
+    await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
+    
 # Function to check if the user is admin
 def is_admin(user_id):
     return user_id == ADMIN_ID
-
-# Start command handler
-@bot.on_message(filters.command("start"))
-async def start_command(bot: Client, message: Message):
-    if message.from_user.id == ADMIN_ID:
-        await message.reply_text("Hello Admin! You have full access.")
-    else:
-        await message.reply_text("Hello User! Use /guide for help.")
 
 # Add user command (Admin Only)
 @bot.on_message(filters.command("adduser") & filters.private)
@@ -168,7 +164,7 @@ async def stop_handler(client, message: Message):
 
 # Engineer command handler
 @bot.on_message(filters.command("Engineer"))
-async def moni_handler(client: Client, message: Message):
+async def Engineer_handler(client: Client, message: Message):
     if message.chat.type == "private":
         user_id = str(message.from_user.id)
         subscription_data = read_subscription_data()

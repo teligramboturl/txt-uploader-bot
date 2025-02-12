@@ -232,31 +232,50 @@ async def upload(bot: Client, m: Message):
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()
     await input.delete(True)
+
     path = f"./downloads/{m.chat.id}"
 
     try:
+        # Extract the file name without extension
+        file_name = os.path.basename(x)  # Get the file name from the path
+        raw_text0 = os.path.splitext(file_name)[0]  # Remove the file extension
+
         with open(x, "r") as f:
             content = f.read()
         content = content.split("\n")
         links = []
         for i in content:
             links.append(i.split("://", 1))
-        
-        # Extract the title from the file name
-        file_name = os.path.basename(x)  # Get the file name from the path
-        raw_text0 = os.path.splitext(file_name)[0]  # Remove the file extension to get the title
-        
+
+        # Print or use raw_text0 for further processing
+        print(f"Extracted file name: {raw_text0}")
+
+        # Continue with the rest of the logic
+        # (e.g., processing links, etc.)
+
+        # Clean up the downloaded file
         os.remove(x)
-            # print(len(links)
-    except:
-           await m.reply_text("**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.**")
-           os.remove(x)
-           return
+
+    except Exception as e:
+        await m.reply_text(f"**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: {str(e)}**")
+        os.remove(x)
+        return
         
     await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n**𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐢𝐚𝐥 𝐢𝐬** **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
     await input0.delete(True)
+
+     await editable.edit("**∝ 𝐍𝐨𝐰 𝐏𝐥𝐞𝐚𝐬𝐞 𝐒𝐞𝐧𝐝 𝐌𝐞 𝐘𝐨𝐮𝐫 𝐁𝐚𝐭𝐜𝐡 𝐍𝐚𝐦𝐞\n𝐨𝐫 𝐂 𝐭𝐨 𝐜𝐨𝐩𝐲 𝐟𝐫𝐨𝐦 𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝 𝐟𝐢𝐥𝐞**")
+    input1: Message = await bot.listen(editable.chat.id)
+    
+    # Check if the input is "C" to copy from raw_text0
+    if input1.text.strip().lower() == "c":
+        raw_text0 = raw_text0  # Use the existing value of raw_text0
+    else:
+        raw_text0 = input1.text  # Use the user's input
+    
+    await input1.delete(True)
 
     await editable.edit("**∝ 🎬 𝐄𝐧𝐭𝐞𝐫 𝐑𝐞𝐬𝐨𝐥𝐮𝐭𝐢𝐨𝐧 \n➤ 𝟏𝟒𝟒ᴘ - 𝐬ᴇɴᴅ 144 \n ➤ 𝟐𝟒𝟎ᴘ - 𝐬ᴇɴᴅ 240 \n ➤ 𝟑𝟔𝟎ᴘ - 𝐬ᴇɴᴅ 360 \n ➤ 𝟒𝟖𝟎ᴘ - 𝐬ᴇɴᴅ 480 \n ➤ 𝟕𝟐𝟎ᴘ - 𝐬ᴇɴᴅ 720 \n ➤ 𝟏𝟎𝟖𝟎ᴘ - 𝐬ᴇɴᴅ 1080 **")
     input2: Message = await bot.listen(editable.chat.id)
@@ -281,24 +300,29 @@ async def upload(bot: Client, m: Message):
     except Exception:
         res = "UN"
 
-    await editable.edit("𝐍𝐨𝐰 𝐄𝐧𝐭𝐞𝐫 𝐘𝐨𝐮𝐫 𝐍𝐚𝐦𝐞 𝐭𝐨 𝐚𝐝𝐝 𝐜𝐚𝐩𝐭𝐢𝐨𝐧 𝐨𝐧 𝐲𝐨𝐮𝐫 𝐮𝐩𝐥𝐨𝐚𝐝𝐞𝐝 𝐟𝐢𝐥𝐞")
+    await editable.edit("𝐍𝐨𝐰 𝐄𝐧𝐭𝐞𝐫 𝐘𝐨𝐮𝐫 𝐍𝐚𝐦𝐞 𝐭𝐨 𝐚𝐝𝐝 𝐜𝐚𝐩𝐭𝐢𝐨𝐧 𝐨𝐧 𝐲𝐨𝐮𝐫 𝐮𝐩𝐥𝐨𝐚𝐝𝐞𝐝 𝐟𝐢𝐥𝐞\n𝐨𝐫 𝐝𝐞 𝐟𝐨𝐫 𝐝𝐞𝐟𝐚𝐮𝐥𝐭")
     input3: Message = await bot.listen(editable.chat.id)
     raw_text3 = input3.text
     await input3.delete(True)
-    highlighter  = f"️ ⁪⁬⁮⁮⁮"
-    if raw_text3 == 'Robin':
-        MPH = highlighter 
+    
+    highlighter = f"️ ⁪⁬⁮⁮⁮"
+    
+    # Check if the input is "de" or if the input is empty
+    if raw_text3.lower() == "de" or not raw_text3.strip():
+        MPH = "𝕰𝖓𝖌𝖎𝖓𝖊𝖊𝖗𝖘 𝕭𝖆𝖇𝖚"
+    elif raw_text3 == 'Robin':
+        MPH = highlighter
     else:
         MPH = raw_text3
 
-    #await editable.edit("**𝐄𝐧𝐭𝐞𝐫 𝐘𝐨𝐮𝐫 𝐏𝐖 𝐓𝐨𝐤𝐞𝐧 𝐅𝐨𝐫 𝐌𝐏𝐃 𝐔𝐑𝐋 𝐨𝐫 𝐬𝐞𝐧𝐝 '𝐮𝐧𝐤𝐧𝐨𝐰𝐧' 𝐟𝐨𝐫 𝐮𝐬𝐞 𝐝𝐞𝐟𝐚𝐮𝐥𝐭**")
-    #input4: Message = await bot.listen(editable.chat.id)
-    #raw_text4 = input4.text
-    #await input4.delete(True)
-    #if raw_text4 == 'unknown':
-        #MR = token
-    #else:
-        #MR = raw_text4
+    await editable.edit("**𝐄𝐧𝐭𝐞𝐫 𝐘𝐨𝐮𝐫 𝐏𝐖 𝐓𝐨𝐤𝐞𝐧 𝐅𝐨𝐫 𝐌𝐏𝐃 𝐔𝐑𝐋 𝐨𝐫 𝐒𝐞𝐧𝐝 '𝐎𝐭𝐡' 𝐟𝐨𝐫 𝐎𝐭𝐡𝐞𝐫𝐬**")
+    input4: Message = await bot.listen(editable.chat.id)
+    raw_text4 = input4.text
+    await input4.delete(True)
+    if raw_text4 == 'Oth':
+        MR = None
+    else:
+        MR = raw_text4
    
     await editable.edit("🌄 𝐍𝐨𝐰 𝐬𝐞𝐧𝐝 𝐭𝐡𝐞 𝐓𝐡𝐮𝐦𝐛 𝐔𝐑𝐋 \n 𝐄𝐠. » https://i.postimg.cc/d1JW4kb6/01.jpg \n 𝐎𝐫 𝐢𝐟 𝐝𝐨𝐧'𝐭 𝐰𝐚𝐧𝐭 𝐭𝐡𝐮𝐦𝐛𝐧𝐚𝐢𝐥 𝐬𝐞𝐧𝐝 = 𝐧𝐨")
     input6 = message = await bot.listen(editable.chat.id)
@@ -399,11 +423,11 @@ async def upload(bot: Client, m: Message):
                     x = url.split("/")[5]
                     x = url.replace(x, "")
                     url = ((m3u8.loads(requests.get(url).text)).data['playlists'][1]['uri']).replace(q+"/", x)
-
+                    
             #physicswallah
             elif '/master.mpd' in url:
-             vid_id =  url.split("/")[-2]
-            url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"
+                vid_id =  url.split("/")[-2]
+                url =  f"https://madxapi-d0cbf6ac738c.herokuapp.com/{vid_id}/master.m3u8?token={raw_text4}"
 
             if "/master.mpd" in url :
                 if "https://sec1.pw.live/" in url:

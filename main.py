@@ -107,7 +107,7 @@ async def start_command(bot: Client, message: Message):
 SUBSCRIPTION_FILE = "subscription_data.txt"
 CHANNELS_FILE = "channels_data.json"
 YOUR_ADMIN_ID = 5957208798
-
+@admin_only = "YOUR_ADMIN_ID"
 def read_subscription_data():
     if not os.path.exists(SUBSCRIPTION_FILE):
         return []
@@ -146,17 +146,6 @@ async def guide_handler(client: Client, message: Message):
         "If you have any questions, feel free to ask! 💬"
     )
     await message.reply_text(guide_text)
-
-# Admin-only decorator
-def admin_only(func):
-    @wraps(func)
-    async def wrapper(client, message: Message, *args, **kwargs):
-        user_id = message.from_user.id
-        if user_id == YOUR_ADMIN_ID:
-            return await func(client, message, *args, **kwargs)
-        else:
-            await message.reply_text("❌ You are not authorized to use this command.")
-    return wrapper
 
 @bot.on_message(filters.command("adduser") & filters.private)
 @admin_only

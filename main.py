@@ -196,12 +196,6 @@ async def engineer_handler(client: Client, message: Message):
     user_id = str(message.from_user.id)
     chat_id = str(message.chat.id)
 
-    # Check if the user is an admin first
-    if is_admin(message.from_user.id):
-        is_premium = True  # Admins should bypass premium checks
-    else:
-        is_premium = False
-
     # Check if user is a premium subscriber (for private chats)
     if not is_premium and message.chat.type == "private":
         subscription_data = read_subscription_data()
@@ -216,6 +210,7 @@ async def engineer_handler(client: Client, message: Message):
             await message.reply_text("❗️ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
 
+    if is_admin(message.from_user.id):
     # Continue with file request and processing
     editable = await message.reply_text("𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄")
     input_message: Message = await client.listen(editable.chat.id)

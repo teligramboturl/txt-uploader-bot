@@ -92,7 +92,7 @@ async def start_command(bot: Client, message: Message):
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
 CHANNELS_FILE = "channels_data.txt"
-ADMIN_ID = "5957208798"
+ADMIN_ID = 5957208798
 
 def read_subscription_data():
     """Reads and returns the subscription data."""

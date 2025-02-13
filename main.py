@@ -177,7 +177,7 @@ async def cookies_handler(client: Client, m: Message):
 
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
-CHANNELS_FILE = "channels_data.json"
+CHANNELS_FILE = "channel_file.txt"
 
 # Admin ID
 YOUR_ADMIN_ID = 5548106944
@@ -194,7 +194,7 @@ def read_channels_data():
     if not os.path.exists(CHANNELS_FILE):
         return []
     with open(CHANNELS_FILE, "r") as f:
-        return json.load(f)
+        return [line.strip() for line in f.readlines()]
 
 # Function to write subscription data
 def write_subscription_data(data):
@@ -205,7 +205,8 @@ def write_subscription_data(data):
 # Function to write channels data
 def write_channels_data(data):
     with open(CHANNELS_FILE, "w") as f:
-        json.dump(data, f, indent=4)
+        for channel in data:
+            f.write(channel + "\n")
 
 # Admin-only decorator
 def admin_only(func):

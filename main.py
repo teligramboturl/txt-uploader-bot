@@ -409,7 +409,7 @@ async def stop_handler(client, message: Message):
     await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-@bot.on_message(filters.command("Engineer"))
+@bot.on_message(filters.command("moni"))
 async def moni_handler(client: Client, m: Message):
     if m.chat.type == "private":
         user_id = str(m.from_user.id)

@@ -410,59 +410,28 @@ async def stop_handler(client, message: Message):
     await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-@bot.on_message(filters.command("moni"))
-async def moni_handler(client: Client, m: Message):
-    if m.chat.type == "private":
-        user_id = str(m.from_user.id)
-        subscription_data = read_subscription_data()
-        if not any(user[0] == user_id for user in subscription_data):
-            await m.reply_text("❌ You are not a premium user. Please upgrade your subscription! 💎")
-            return
-    else:
-        channels = read_channels_data()
-        if str(m.chat.id) not in channels:
-            await m.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
-            return
-            
-    editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
+editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
+    input_message: Message = await client.listen(editable.chat.id)
+    # Download file
+    file_path = await input_message.download()
+    await input_message.delete()
 
     try:
-        input: Message = await client.listen(editable.chat.id)
-        
-        # Check if the message contains a document and is a .txt file
-        if not input.document or not input.document.file_name.endswith('.txt'):
-            await m.reply_text("Please send a valid .txt file.")
-            return
+        file_name = os.path.basename(file_path)
+        raw_text0 = os.path.splitext(file_name)[0]
 
-        # Download the file
-        x = await input.download()
-        await input.delete(True)
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.readlines()
 
-        path = f"./downloads/{m.chat.id}"
-        file_name = os.path.splitext(os.path.basename(x))[0]
+        links = [line.strip() for line in content if "://" in line]
+        print(f"Extracted file name: {raw_text0}")
 
-        # Read and process the file
-        with open(x, "r") as f:
-            content = f.read().strip()
+    except Exception as e:
+        await message.reply_text(f"**❌ Error processing file: {str(e)}**")
 
-        lines = content.splitlines()
-        links = []
-
-        for line in lines:
-            line = line.strip()
-            if line:
-                link = line.split("://", 1)
-                if len(link) > 1:
-                    links.append(link)
-
-        os.remove(x)
-        print(len(links))
-        
-    except:
-        await m.reply_text("∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.")
-        if os.path.exists(x):
-            os.remove(x)
-
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
         # Send the number of links found
         await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤𝐬 𝐅𝐨𝐮𝐧𝐝: {len(links)}**")
 

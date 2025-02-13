@@ -265,12 +265,6 @@ async def remove_user(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /removeuser <user_id>")
 
-YOUR_ADMIN_ID = 5548106944
-
-# Helper function to check admin privilege
-def is_admin(user_id):
-    return user_id == YOUR_ADMIN_ID
-
 # Command to show all users (Admin only)
 @bot.on_message(filters.command("users") & filters.private)
 async def show_users(client, message: Message):
@@ -354,12 +348,6 @@ async def remove_channel(client, message: Message):
             await message.reply_text(f"Channel {channel_id} is not in the list.")
     except ValueError:
         await message.reply_text("Invalid command format. Use: /remove_channels <channel_id>")
-
-YOUR_ADMIN_ID = 5548106944
-
-# Helper function to check admin privilege
-def is_admin(user_id):
-    return user_id == YOUR_ADMIN_ID
 
 # Command to show all allowed channels (Admin only)
 @bot.on_message(filters.command("allowed_channels"))

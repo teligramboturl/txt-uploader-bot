@@ -410,7 +410,7 @@ async def stop_handler(client, message: Message):
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 @bot.on_message(filters.command("Engineer"))
-async def Engineer_handler(client: Client, m: Message):
+async def moni_handler(client: Client, m: Message):
     if m.chat.type == "private":
         user_id = str(m.from_user.id)
         subscription_data = read_subscription_data()

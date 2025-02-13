@@ -269,7 +269,7 @@ YOUR_ADMIN_ID = 5957208798
 
 # Helper function to check admin privilege
 def is_admin(user_id):
-    return user_id == YOUR_ADMIN_ID
+    return user_id == 5957208798
 
 # Command to show all users (Admin only)
 @bot.on_message(filters.command("users") & filters.private)
@@ -297,7 +297,7 @@ async def my_plan(client, message: Message):
     subscription_data = read_subscription_data()  # Make sure this function is implemented elsewhere
 
     # Define YOUR_ADMIN_ID somewhere in your code
-    if user_id == str(YOUR_ADMIN_ID):  # YOUR_ADMIN_ID should be an integer
+    if user_id == str(5957208798):  # YOUR_ADMIN_ID should be an integer
         await message.reply_text("**✨ You have permanent access!**")
     elif any(user[0] == user_id for user in subscription_data):  # Assuming subscription_data is a list of [user_id, expiration_date]
         expiration_date = next(user[1] for user in subscription_data if user[0] == user_id)
@@ -355,7 +355,7 @@ async def remove_channel(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /remove_channels <channel_id>")
 
-YOUR_ADMIN_ID = 5548106944
+YOUR_ADMIN_ID = 5957208798
 
 # Helper function to check admin privilege
 def is_admin(user_id):

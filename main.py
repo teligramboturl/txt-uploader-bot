@@ -81,24 +81,25 @@ keyboard = InlineKeyboardMarkup(
 Busy = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton(text="📞 Contact", url="https://t.me/sanjaykagra86"),
-            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/SSC_Aspirants_7"),
+            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
+            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
         ],
         [
-            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/SSC_Aspirants_7"),
+            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
         ],
     ]
 )
 
 # Image URLs for the random image feature
 image_urls = [
-    "https://i.ibb.co/dpRKmmj/file-3957.jpg",
-    "https://i.ibb.co/NSbPQ5n/file-3956.jpg",
-    "https://i.ibb.co/Z8R4z0g/file-3962.jpg",
-    "https://i.ibb.co/LtqjVy7/file-3958.jpg",
-    "https://i.ibb.co/bm20zfd/file-3959.jpg",
-    "https://i.ibb.co/0V0BngV/file-3960.jpg",
-    "https://i.ibb.co/rQMXQjX/file-3961.jpg",
+    "https://i.postimg.cc/t428ZHY7/02.webp",
+    "https://i.postimg.cc/6QkC6yLK/03.webp",
+    "https://i.postimg.cc/fbdNhHf8/04.webp",
+    "https://i.postimg.cc/yxMGnKwB/05.webp",
+    "https://i.postimg.cc/50ddnwvD/06.webp",
+    "https://i.postimg.cc/wT7zxT6f/07.webp",
+    "https://i.postimg.cc/pVk0GfM4/08.webp",
+    "https://i.postimg.cc/1tBLrbKY/09.webp",
     # Add more image URLs as needed
 ]
 
@@ -121,7 +122,7 @@ async def start_command(bot: Client, message: Message):
         "➠ **Can Extract Videos & PDFs From Your Text File and Upload to Telegram!**\n"
         "➠ **For Guide Use Command /guide 📖**\n\n"
         "➠ **Use /Engineer Command to Download From TXT File** 📄\n\n"
-        "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @SanjayKagra86🩷"
+        "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:**✅@Engineers_Babu "
     )
 
     # Send the image with caption and buttons

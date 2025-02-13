@@ -39,9 +39,9 @@ bot = Client(
     bot_token=BOT_TOKEN
 )
 
-API_ID    = os.environ.get("API_ID", "24495656")
-API_HASH  = os.environ.get("API_HASH", "61afcf68c6429714dd18acd07f246571")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "7842202956:AAHgKbWG5FSQhRdcovXmqaEYlPMd-dQu630") 
+API_ID = os.environ.get("API_ID", "24495656")
+API_HASH = os.environ.get("API_HASH", "61afcf68c6429714dd18acd07f246571")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "7842202956:AAHgKbWG5FSQhRdcovXmqaEYlPMd-dQu630")
 
 # Define aiohttp routes
 routes = web.RouteTableDef()
@@ -61,7 +61,7 @@ async def start_bot():
 
 async def stop_bot():
     await bot.stop()
-  
+
 import random
 
 # Inline keyboard for start command
@@ -110,10 +110,10 @@ async def start_command(bot: Client, message: Message):
         chat_id=message.chat.id,
         text="Loading... ⏳🔄"
     )
-  
+
     # Choose a random image URL
     random_image_url = random.choice(image_urls)
-    
+
     # Caption for the image
     caption = (
         "**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫 👋!**\n\n"
@@ -134,7 +134,6 @@ async def start_command(bot: Client, message: Message):
 
     # Delete the loading message
     await loading_message.delete()
-
 
 COOKIES_FILE_PATH = "youtube_cookies.txt"
 
@@ -176,7 +175,6 @@ async def cookies_handler(client: Client, m: Message):
     except Exception as e:
         await m.reply_text(f"⚠️ An error occurred: {str(e)}")
 
-
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
 CHANNELS_FILE = "channels_data.json"
@@ -191,7 +189,6 @@ def read_subscription_data():
     with open(SUBSCRIPTION_FILE, "r") as f:
         return [line.strip().split(",") for line in f.readlines()]
 
-
 # Function to read channels data
 def read_channels_data():
     if not os.path.exists(CHANNELS_FILE):
@@ -199,19 +196,16 @@ def read_channels_data():
     with open(CHANNELS_FILE, "r") as f:
         return json.load(f)
 
-
 # Function to write subscription data
 def write_subscription_data(data):
     with open(SUBSCRIPTION_FILE, "w") as f:
         for user in data:
             f.write(",".join(user) + "\n")
 
-
 # Function to write channels data
 def write_channels_data(data):
     with open(CHANNELS_FILE, "w") as f:
         json.dump(data, f, indent=4)
-
 
 # Admin-only decorator
 def admin_only(func):
@@ -251,7 +245,6 @@ async def add_user(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /adduser <user_id> <expiration_date>")
 
-
 # 2. /removeuser
 @bot.on_message(filters.command("removeuser") & filters.private)
 @admin_only
@@ -281,7 +274,7 @@ async def show_users(client, message: Message):
         return
 
     subscription_data = read_subscription_data()
-    
+
     if subscription_data:
         users_list = "\n".join(
             [f"{idx + 1}. User ID: `{user[0]}`, Expiration Date: `{user[1]}`" for idx, user in enumerate(subscription_data)]
@@ -331,7 +324,6 @@ async def add_channel(client, message: Message):
             await message.reply_text(f"Channel {channel_id} is already added.")
     except ValueError:
         await message.reply_text("Invalid command format. Use: /add_channel <channel_id>")
-
 
 # 5. /remove_channels
 @bot.on_message(filters.command("remove_channel"))
@@ -390,7 +382,6 @@ async def remove_all_channels(client, message: Message):
     write_channels_data([])
     await message.reply_text("✅ **All channels have been removed successfully.**")
 
-
 # 6. /stop
 @bot.on_message(filters.command("stop"))
 async def stop_handler(client, message: Message):
@@ -406,7 +397,7 @@ async def stop_handler(client, message: Message):
             await message.reply_text("🚫 You are not a premium user. Subscribe to unlock all features! ✨")
             return
 
-    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
+    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 @bot.on_message(filters.command("moni"))
@@ -422,12 +413,12 @@ async def moni_handler(client: Client, m: Message):
         if str(m.chat.id) not in channels:
             await m.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-            
+
     editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
 
     try:
         input: Message = await client.listen(editable.chat.id)
-        
+
         # Check if the message contains a document and is a .txt file
         if not input.document or not input.document.file_name.endswith('.txt'):
             await m.reply_text("Please send a valid .txt file.")
@@ -462,12 +453,12 @@ async def moni_handler(client: Client, m: Message):
         if os.path.exists(x):
             os.remove(x)
 
-    await editable.edit(f"∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐚𝐥 𝐢𝐬 **1**")
+    await editable.edit(f"∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐢𝐚𝐥 𝐢𝐬 **1**")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
-    await input0.delete(True)               
+    await input0.delete(True)
 
-    # This is where you would set up your bot and connect the handle_command function      
+    # This is where you would set up your bot and connect the handle_command function
     await editable.edit("**Enter Batch Name or send d for grabing from text filename.**")
     input1: Message = await bot.listen(editable.chat.id)
     raw_text0 = input1.text
@@ -476,7 +467,7 @@ async def moni_handler(client: Client, m: Message):
         b_name = file_name
     else:
         b_name = raw_text0
-        
+
     await editable.edit("∝ 𝐄𝐧𝐭𝐞𝐫 𝐄𝐞𝐬𝐨𝐥𝐮𝐭𝐢𝐨𝐧 🎬\n☞ 144,240,360,480,720,1080\nPlease Choose Quality")
     input2: Message = await bot.listen(editable.chat.id)
     raw_text2 = input2.text
@@ -493,13 +484,11 @@ async def moni_handler(client: Client, m: Message):
         elif raw_text2 == "720":
             res = "1280x720"
         elif raw_text2 == "1080":
-            res = "1920x1080" 
-        else: 
+            res = "1920x1080"
+        else:
             res = "UN"
     except Exception:
-            res = "UN"
-    
-    
+        res = "UN"
 
     await editable.edit("**Enter Your Name or send `de` for use default**")
 
@@ -520,7 +509,7 @@ async def moni_handler(client: Client, m: Message):
         CR = raw_text3
     else:
         CR = credit
-   
+
     await editable.edit("🌄 Now send the Thumb url if don't want thumbnail send no ")
     input6 = message = await bot.listen(editable.chat.id)
     raw_text6 = input6.text
@@ -540,111 +529,108 @@ async def moni_handler(client: Client, m: Message):
         count = int(raw_text)
 
     try:
-        # Assuming links is a list of lists and you want to process the second element of each sublist    
+        # Assuming links is a list of lists and you want to process the second element of each sublist
         for i in range(count - 1, len(links)):
             # Replace parts of the URL as needed
-            V = links[i][1].replace("file/d/","uc?export=download&id=")\
-               .replace("www.youtube-nocookie.com/embed", "youtu.be")\
-               .replace("?modestbranding=1", "")\
-               .replace("/view?usp=sharing","")\
-               .replace("youtube.com/embed/", "youtube.com/watch?v=")
+            V = links[i][1].replace("file/d/", "uc?export=download&id=") \
+                .replace("www.youtube-nocookie.com/embed", "youtu.be") \
+                .replace("?modestbranding=1", "") \
+                .replace("/view?usp=sharing", "") \
+                .replace("youtube.com/embed/", "youtube.com/watch?v=")
 
             url = "https://" + V
 
             if "acecwply" in url:
                 cmd = f'yt-dlp -o "{name}.%(ext)s" -f "bestvideo[height<={raw_text2}]+bestaudio" --hls-prefer-ffmpeg --no-keep-video --remux-video mkv --no-warning "{url}"'
-                
 
             if "visionias" in url:
                 async with ClientSession() as session:
-                    async with session.get(url, headers={'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Accept-Language': 'en-US,en;q=0.9', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Referer': 'http://www.visionias.in/', 'Sec-Fetch-Dest': 'iframe', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-Site': 'cross-site', 'Upgrade-Insecure-Requests': '1', 'User-Agent': 'Mozilla/5.0 (Linux; Android 12; RMX2121) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36', 'sec-ch-ua': '"Chromium";v="107", "Not=A?Brand";v="24"', 'sec-ch-ua-mobile': '?1', 'sec-ch-ua-platform': '"Android"',}) as resp:
+                    async with session.get(url, headers={'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'Accept-Language': 'en-US,en;q=0.9', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive', 'Pragma': 'no-cache', 'Referer': 'http://www.visionias.in/', 'Sec-Fetch-Dest': 'iframe', 'Sec-Fetch-Mode': 'navigate', 'Sec-Fetch-Site': 'cross-site', 'Upgrade-Insecure-Requests': '1', 'User-Agent': 'Mozilla/5.0 (Linux; Android 12; RMX2121) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36', 'sec-ch-ua': '"Chromium";v="107", "Not=A?Brand";v="24"', 'sec-ch-ua-mobile': '?1', 'sec-ch-ua-platform': '"Android"', }) as resp:
                         text = await resp.text()
                         url = re.search(r"(https://.*?playlist.m3u8.*?)\"", text).group(1)
 
             elif 'videos.classplusapp' in url or "tencdn.classplusapp" in url or "webvideos.classplusapp.com" in url or "media-cdn-alisg.classplusapp.com" in url or "videos.classplusapp" in url or "videos.classplusapp.com" in url or "media-cdn-a.classplusapp" in url or "media-cdn.classplusapp" in url or "drmcdni" in url:
-             url = requests.get(f'https://api.classplusapp.com/cams/uploader/video/jw-signed-url?url={url}', headers={'x-access-token': 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgzNjkyMTIsIm9yZ0lkIjoyNjA1LCJ0eXBlIjoxLCJtb2JpbGUiOiI5MTcwODI3NzQyODkiLCJuYW1lIjoiQWNlIiwiZW1haWwiOm51bGwsImlzRmlyc3RMb2dpbiI6dHJ1ZSwiZGVmYXVsdExhbmd1YWdlIjpudWxsLCJjb3VudHJ5Q29kZSI6IklOIiwiaXNJbnRlcm5hdGlvbmFsIjowLCJpYXQiOjE2NDMyODE4NzcsImV4cCI6MTY0Mzg4NjY3N30.hM33P2ai6ivdzxPPfm01LAd4JWv-vnrSxGXqvCirCSpUfhhofpeqyeHPxtstXwe0'}).json()['url']
+                url = requests.get(f'https://api.classplusapp.com/cams/uploader/video/jw-signed-url?url={url}', headers={'x-access-token': 'eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgzNjkyMTIsIm9yZ0lkIjoyNjA1LCJ0eXBlIjoxLCJtb2JpbGUiOiI5MTcwODI3NzQyODkiLCJuYW1lIjoiQWNlIiwiZW1haWwiOm51bGwsImlzRmlyc3RMb2dpbiI6dHJ1ZSwiZGVmYXVsdExhbmd1YWdlIjpudWxsLCJjb3VudHJ5Q29kZSI6IklOIiwiaXNJbnRlcm5hdGlvbmFsIjowLCJpYXQiOjE2NDMyODE4NzcsImV4cCI6MTY0Mzg4NjY3N30.hM33P2ai6ivdzxPPfm01LAd4JWv-vnrSxGXqvCirCSpUfhhofpeqyeHPxtstXwe0'}).json()['url']
 
             elif '/master.mpd' in url:
-             id =  url.split("/")[-2]
-             url =  "https://d26g5bnklkwsh4.cloudfront.net/" + id + "/master.m3u8"
+                id = url.split("/")[-2]
+                url = "https://d26g5bnklkwsh4.cloudfront.net/" + id + "/master.m3u8"
 
             name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
             name = f'{str(count).zfill(3)}) {name1[:60]}'
 
             if 'testbook' in url:
-                id =  url.split("/")[-2]
-                url =  "https://extractapi.vercel.app/classplus?link=https://cpvod.testbook.com/" + id + "/playlist.m3u8"
+                id = url.split("/")[-2]
+                url = "https://extractapi.vercel.app/classplus?link=https://cpvod.testbook.com/" + id + "/playlist.m3u8"
 
             elif 'cpvod.testbook' in url:
-                id =  url.split("/")[-2]
-                url =  "https://extractapi.vercel.app/classplus?link=https://cpvod.testbook.com/" + id + "/playlist.m3u8"
-             
-            if "/master.mpd" in url :
+                id = url.split("/")[-2]
+                url = "https://extractapi.vercel.app/classplus?link=https://cpvod.testbook.com/" + id + "/playlist.m3u8"
+
+            if "/master.mpd" in url:
                 if "https://sec1.pw.live/" in url:
-                    url = url.replace("https://sec1.pw.live/","https://d1d34p8vz63oiq.cloudfront.net/")
+                    url = url.replace("https://sec1.pw.live/", "https://d1d34p8vz63oiq.cloudfront.net/")
                     print(url)
-                else: 
-                    url = url    
+                else:
+                    url = url
 
                 print("mpd check")
                 key = await helper.get_drm_keys(url)
                 print(key)
                 await m.reply_text(f"got keys form api : \n`{key}`")
-          
+
             if "/master.mpd" in url:
-                cmd= f" yt-dlp -k --allow-unplayable-formats -f bestvideo.{quality} --fixup never {url} "
+                cmd = f" yt-dlp -k --allow-unplayable-formats -f bestvideo.{quality} --fixup never {url} "
                 print("counted")
 
             if "edge.api.brightcove.com" in url:
                 bcov = 'bcov_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjQyMzg3OTEsImNvbiI6eyJpc0FkbWluIjpmYWxzZSwiYXVzZXIiOiJVMFZ6TkdGU2NuQlZjR3h5TkZwV09FYzBURGxOZHowOSIsImlkIjoiZEUxbmNuZFBNblJqVEROVmFWTlFWbXhRTkhoS2R6MDkiLCJmaXJzdF9uYW1lIjoiYVcxV05ITjVSemR6Vm10ak1WUlBSRkF5ZVNzM1VUMDkiLCJlbWFpbCI6Ik5Ga3hNVWhxUXpRNFJ6VlhiR0ppWTJoUk0wMVdNR0pVTlU5clJXSkRWbXRMTTBSU2FHRnhURTFTUlQwPSIsInBob25lIjoiVUhVMFZrOWFTbmQ1ZVcwd1pqUTViRzVSYVc5aGR6MDkiLCJhdmF0YXIiOiJLM1ZzY1M4elMwcDBRbmxrYms4M1JEbHZla05pVVQwOSIsInJlZmVycmFsX2NvZGUiOiJOalZFYzBkM1IyNTBSM3B3VUZWbVRtbHFRVXAwVVQwOSIsImRldmljZV90eXBlIjoiYW5kcm9pZCIsImRldmljZV92ZXJzaW9uIjoiUShBbmRyb2lkIDEwLjApIiwiZGV2aWNlX21vZGVsIjoiU2Ftc3VuZyBTTS1TOTE4QiIsInJlbW90ZV9hZGRyIjoiNTQuMjI2LjI1NS4xNjMsIDU0LjIyNi4yNTUuMTYzIn19.snDdd-PbaoC42OUhn5SJaEGxq0VzfdzO49WTmYgTx8ra_Lz66GySZykpd2SxIZCnrKR6-R10F5sUSrKATv1CDk9ruj_ltCjEkcRq8mAqAytDcEBp72-W0Z7DtGi8LdnY7Vd9Kpaf499P-y3-godolS_7ixClcYOnWxe2nSVD5C9c5HkyisrHTvf6NFAuQC_FD3TzByldbPVKK0ag1UnHRavX8MtttjshnRhv5gJs5DQWj4Ir_dkMcJ4JaVZO3z8j0OxVLjnmuaRBujT-1pavsr1CCzjTbAcBvdjUfvzEhObWfA1-Vl5Y4bUgRHhl1U-0hne4-5fF0aouyu71Y6W0eg'
-                url = url.split("bcov_auth")[0]+bcov
-       
+                url = url.split("bcov_auth")[0] + bcov
+
             if "youtu" in url:
                 ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
             else:
                 ytf = f"b[height<={raw_text2}]/bv[height<={raw_text2}]+ba/b/bv+ba"
-            
+
             if "jw-prod" in url:
                 cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
 
             if "embed" in url:
                 ytf = f"bestvideo[height<={raw_text2}]+bestaudio/best[height<={raw_text2}]"
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
-            
+
             elif "m3u8" or "livestream" in url:
                 cmd = f'yt-dlp -f "{ytf}" --no-keep-video --remux-video mkv "{url}" -o "{name}.%(ext)s"'
 
-           
             elif "youtube.com" in url or "youtu.be" in url:
                 cmd = f'yt-dlp --cookies "youtube_cookies.txt" -f "{ytf}" "{url}" -o "{name}.mp4"'
 
             else:
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
-                     
-            try:  
-                
+
+            try:
+
                 cc = f'**🎥 VIDEO ID: {str(count).zfill(3)}.\n\n📄 Title: {name1} {res} ⎳𝓸𝓿𝓮❥❤️━━╬٨ﮩSanju٨ـﮩـ Love❥.mkv\n\n<pre><code>🔖 Batch Name: {b_name}</code></pre>\n\n📥 Extracted By : {CR}**'
                 cc1 = f'**📁 FILE ID: {str(count).zfill(3)}.\n\n📄 Title: {name1} 𝄟✮͢🦋⃟≛⃝m✮⃝oni.pdf \n\n<pre><code>🔖 Batch Name: {b_name}</code></pre>\n\n📥 Extracted By : {CR}**'
-                                 
-                
+
                 if "drive" in url:
                     try:
                         ka = await helper.download(url, name)
-                        copy = await bot.send_document(chat_id=m.chat.id,document=ka, caption=cc1)
-                        count+=1
+                        copy = await bot.send_document(chat_id=m.chat.id, document=ka, caption=cc1)
+                        count += 1
                         os.remove(ka)
                         time.sleep(1)
                     except FloodWait as e:
                         await m.reply_text(str(e))
                         time.sleep(e.x)
                         continue
-                
+
                 elif ".pdf" in url:
                     try:
                         await asyncio.sleep(4)
                         # Replace spaces with %20 in the URL
                         url = url.replace(" ", "%20")
- 
+
                         # Create a cloudscraper session
                         scraper = cloudscraper.create_scraper()
 
@@ -676,8 +662,7 @@ async def moni_handler(client: Client, m: Message):
                         await m.reply_text(f"An error occurred: {str(e)}")
                         await asyncio.sleep(4)  # You can replace this with more specific
                         continue
-                        
-                          
+
                 else:
                     Show = f"❊⟱ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 ⟱❊ »\n\n📄 Title:- `{name}\n\n⌨ 𝐐𝐮𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**🔗 𝐔𝐑𝐋 »** `{url}`"
                     prog = await m.reply_text(f"**Downloading:-**\n\n**📄 Title:-** `{name}\n\nQuality - {raw_text2}`\n\n**Link:**`{url}`\n\n**Bot Made By SanjaKagra86🩷 **")

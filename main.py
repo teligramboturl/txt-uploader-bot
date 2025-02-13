@@ -46,10 +46,7 @@ bot = Client(
 )
 
 cookies_file_path = os.getenv("COOKIES_FILE_PATH", "youtube_cookies.txt")
-# File paths
-SUBSCRIPTION_FILE = "subscription_data.txt"
-CHANNELS_FILE = "channels_data.txt"
-ADMIN_ID = "5957208798"
+
 
 # Image URLs for the random image feature
 image_urls = [
@@ -91,6 +88,11 @@ keyboard = InlineKeyboardMarkup(
 @bot.on_message(filters.command(["start"]))
 async def start_command(bot: Client, message: Message):
     await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
+
+# File paths
+SUBSCRIPTION_FILE = "subscription_data.txt"
+CHANNELS_FILE = "channels_data.txt"
+ADMIN_ID = "5957208798"
 
 def read_subscription_data():
     """Reads and returns the subscription data."""

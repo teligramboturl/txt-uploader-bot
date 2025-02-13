@@ -195,50 +195,52 @@ async def stop_handler(client, message: Message):
 async def engineer_handler(client: Client, message: Message):
     user_id = str(message.from_user.id)
     chat_id = str(message.chat.id)
-    
+
+    # Check if the user is an admin first
+    if is_admin(message.from_user.id):
+        is_premium = True  # Admins should bypass premium checks
+    else:
+        is_premium = False
+
     # Check if user is a premium subscriber (for private chats)
-    if message.chat.type == "private":
+    if not is_premium and message.chat.type == "private":
         subscription_data = read_subscription_data()
         if not any(user[0] == user_id for user in subscription_data):
             await message.reply_text("❌ You are not a premium user. Please upgrade your subscription! 💎")
             return
-    else:
-        # Check if chat is a premium channel
+
+    # Check if chat is a premium channel
+    if not is_premium and message.chat.type != "private":
         channels = read_channels_data()
         if chat_id not in channels:
-            await message.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
+            await message.reply_text("❗️ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-    
-    # Check if the user is an admin
-    if not is_admin(message.from_user.id):
-        await message.reply_text("🚫 You do not have permission to use this command.")
-        return
-    
-    # Ask for a file
+
+    # Continue with file request and processing
     editable = await message.reply_text("𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄")
     input_message: Message = await client.listen(editable.chat.id)
-    
+
     if not input_message.document:
         await message.reply_text("❌ Invalid input. Please send a valid text file.")
         return
-    
+
     # Download file
     file_path = await input_message.download()
     await input_message.delete()
-    
+
     try:
         file_name = os.path.basename(file_path)
         raw_text0 = os.path.splitext(file_name)[0]
-        
+
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.readlines()
-        
+
         links = [line.strip() for line in content if "://" in line]
         print(f"Extracted file name: {raw_text0}")
-        
+
     except Exception as e:
         await message.reply_text(f"**❌ Error processing file: {str(e)}**")
-    
+
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)

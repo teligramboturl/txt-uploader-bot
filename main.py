@@ -409,43 +409,54 @@ async def stop_handler(client, message: Message):
 
     await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
     os.execl(sys.executable, sys.executable, *sys.argv)
+    
+@bot.on_message(filters.command(["Engineer"]))
+async def Engineer(bot: Client, m: Message):
+    if message.chat.type == "private":
+        user_id = str(message.from_user.id)
+        subscription_data = read_subscription_data()
+        if not any(user[0] == user_id for user in subscription_data):
+            await message.reply_text("😔 You are not a premium user. Please subscribe to get access! 🔒")
+            return
+    else:
+        channels = read_channels_data()
+        if str(message.chat.id) not in channels:
+            await message.reply_text("🚫 You are not a premium user. Subscribe to unlock all features! ✨")
+            return
 
-editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
-    input_message: Message = await client.listen(editable.chat.id)
-    # Download file
-    file_path = await input_message.download()
-    await input_message.delete()
+    
+    editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
+    input: Message = await bot.listen(editable.chat.id)
+    x = await input.download()
+    await input.delete(True)
+
+    path = f"./downloads/{m.chat.id}"
 
     try:
-        file_name = os.path.basename(file_path)
-        raw_text0 = os.path.splitext(file_name)[0]
+        # Extract the file name without extension
+        file_name = os.path.basename(x)  # Get the file name from the path
+        raw_text0 = os.path.splitext(file_name)[0]  # Remove the file extension
 
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.readlines()
+        with open(x, "r") as f:
+            content = f.read()
+        content = content.split("\n")
+        links = []
+        for i in content:
+            links.append(i.split("://", 1))
 
-        links = [line.strip() for line in content if "://" in line]
+        # Print or use raw_text0 for further processing
         print(f"Extracted file name: {raw_text0}")
 
-    except Exception as e:
-        await message.reply_text(f"**❌ Error processing file: {str(e)}**")
+        # Continue with the rest of the logic
+        # (e.g., processing links, etc.)
 
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        # Send the number of links found
-        await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤𝐬 𝐅𝐨𝐮𝐧𝐝: {len(links)}**")
-
-        # Process the links (you can add your logic here)
-        for link in links:
-            # Example: Print the link (replace with your logic)
-            print(f"Processing link: {link}")
-
-        await m.reply_text("✅ **All links have been processed successfully.**")
+        # Clean up the downloaded file
+        os.remove(x)
 
     except Exception as e:
-        await m.reply_text(f"❌ An error occurred: {str(e)}")
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        await m.reply_text(f"**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: {str(e)}**")
+        os.remove(x)
+        return
 
     await editable.edit(f"∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐚𝐥 𝐢𝐬 **1**")
     input0: Message = await bot.listen(editable.chat.id)

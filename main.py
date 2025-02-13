@@ -68,11 +68,11 @@ import random
 keyboard = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton(text="📞 Contact", url="https://t.me/sanjaykagra86"),
-            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/SSC_Aspirants_7"),
+            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
+            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
         ],
         [
-            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/SSC_Aspirants_7"),
+            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
         ],
     ]
 )
@@ -233,7 +233,7 @@ async def guide_handler(client: Client, message: Message):
         "📖 **Usage**:\n\n"
         "1. `/add_channel -100{channel_id}` - Add a channel to the bot.\n"
         "2. `/remove_channel -100{channel_id}` - Remove a channel from the bot.\n"
-        "3. `/moni .txt` file command - Process the .txt file.\n"
+        "3. `/Engineer .txt` file command - Process the .txt file.\n"
         "4. `/stop` - Stop the task running in the bot. 🚫\n\n"
         "If you have any questions, feel free to ask! 💬"
     )
@@ -356,11 +356,11 @@ async def remove_channel(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /remove_channels <channel_id>")
 
-YOUR_ADMIN_ID = 5957208798
+#YOUR_ADMIN_ID = 5957208798
 
 # Helper function to check admin privilege
-def is_admin(user_id):
-    return user_id == YOUR_ADMIN_ID
+#def is_admin(user_id):
+    #return user_id == YOUR_ADMIN_ID
 # Command to show all allowed channels (Admin only)
 @bot.on_message(filters.command("allowed_channels"))
 async def allowed_channels(client, message: Message):

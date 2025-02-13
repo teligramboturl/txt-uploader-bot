@@ -457,10 +457,11 @@ async def moni_handler(client: Client, m: Message):
 
         os.remove(x)
         print(len(links))
-        except:
-            await m.reply_text("∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.")
-            if os.path.exists(x):
-                os.remove(x)
+        
+    except:
+        await m.reply_text("∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.")
+        if os.path.exists(x):
+            os.remove(x)
 
         # Send the number of links found
         await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤𝐬 𝐅𝐨𝐮𝐧𝐝: {len(links)}**")

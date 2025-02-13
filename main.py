@@ -48,7 +48,7 @@ bot = Client(
 cookies_file_path = os.getenv("COOKIES_FILE_PATH", "youtube_cookies.txt")
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
-CHANNELS_FILE = "channels_data.json"
+CHANNELS_FILE = "channels_data.txt"
 ADMIN_ID = 5957208798
 
 # Image URLs for the random image feature
@@ -91,6 +91,26 @@ keyboard = InlineKeyboardMarkup(
 @bot.on_message(filters.command(["start"]))
 async def start_command(bot: Client, message: Message):
     await bot.send_photo(chat_id=message.chat.id, photo=random_image_url, caption=caption, reply_markup=keyboard)
+
+def read_subscription_data():
+    """Reads and returns the subscription data."""
+    try:
+        with open(SUBSCRIPTION_FILE, "r", encoding="utf-8") as f:
+            return [line.strip().split() for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        return []
+
+def read_channels_data():
+    """Reads and returns the channel data."""
+    try:
+        with open(CHANNELS_FILE, "r", encoding="utf-8") as f:
+            return [line.strip() for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        return []
+
+def is_admin(user_id: int) -> bool:
+    """Checks if a user is an admin."""
+    return user_id == ADMIN_ID
     
 # Function to check if the user is admin
 def is_admin(user_id):
@@ -213,12 +233,11 @@ async def engineer_handler(client: Client, message: Message):
         raw_text0 = os.path.splitext(file_name)[0]
         
         with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read().split("\n")
+            content = f.readlines()
         
-        links = [line.split("://", 1) for line in content if "://" in line]
-        
+        links = [line.strip() for line in content if "://" in line]
         print(f"Extracted file name: {raw_text0}")
-    
+        
     except Exception as e:
         await message.reply_text(f"**❌ Error processing file: {str(e)}**")
     

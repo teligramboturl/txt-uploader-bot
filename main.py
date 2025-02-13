@@ -120,7 +120,7 @@ async def start_command(bot: Client, message: Message):
         "➠ **𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ♥️**\n"
         "➠ **Can Extract Videos & PDFs From Your Text File and Upload to Telegram!**\n"
         "➠ **For Guide Use Command /guide 📖**\n\n"
-        "➠ **Use /moni Command to Download From TXT File** 📄\n\n"
+        "➠ **Use /Engineer Command to Download From TXT File** 📄\n\n"
         "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @SanjayKagra86🩷"
     )
 
@@ -360,7 +360,6 @@ YOUR_ADMIN_ID = 5957208798
 # Helper function to check admin privilege
 def is_admin(user_id):
     return user_id == YOUR_ADMIN_ID
-
 # Command to show all allowed channels (Admin only)
 @bot.on_message(filters.command("allowed_channels"))
 async def allowed_channels(client, message: Message):

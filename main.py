@@ -377,7 +377,6 @@ async def allowed_channels(client, message: Message):
     else:
         await message.reply_text("ℹ️ No channels are currently allowed.")
 
-# Command to remove all channels (Admin only)
 @bot.on_message(filters.command("remove_all_channels"))
 async def remove_all_channels(client, message: Message):
     user_id = message.from_user.id
@@ -390,8 +389,6 @@ async def remove_all_channels(client, message: Message):
     write_channels_data([])
     await message.reply_text("✅ **All channels have been removed successfully.**")
 
-
-# 6. /stop
 @bot.on_message(filters.command("stop"))
 async def stop_handler(client, message: Message):
     if message.chat.type == "private":
@@ -406,7 +403,7 @@ async def stop_handler(client, message: Message):
             await message.reply_text("🚫 You are not a premium user. Subscribe to unlock all features! ✨")
             return
 
-    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
+    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️", True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 @bot.on_message(filters.command("Engineer"))
@@ -422,26 +419,24 @@ async def Engineer_handler(client: Client, m: Message):
         if str(m.chat.id) not in channels:
             await m.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-            
+
     editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
 
     try:
-        input: Message = await client.listen(editable.chat.id)
+        # Wait for the user to send a file
+        input_message: Message = await client.listen(m.chat.id)
         
         # Check if the message contains a document and is a .txt file
-        if not input.document or not input.document.file_name.endswith('.txt'):
-            await m.reply_text("Please send a valid .txt file.")
+        if not input_message.document or not input_message.document.file_name.endswith('.txt'):
+            await m.reply_text("❌ Please send a valid .txt file.")
             return
 
         # Download the file
-        x = await input.download()
-        await input.delete(True)
-
-        path = f"./downloads/{m.chat.id}"
-        file_name = os.path.splitext(os.path.basename(x))[0]
+        file_path = await input_message.download(file_name="./downloads/")
+        await input_message.delete()
 
         # Read and process the file
-        with open(x, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read().strip()
 
         lines = content.splitlines()
@@ -449,18 +444,27 @@ async def Engineer_handler(client: Client, m: Message):
 
         for line in lines:
             line = line.strip()
-            if line:
-                link = line.split("://", 1)
-                if len(link) > 1:
-                    links.append(link)
+            if line and "://" in line:  # Ensure the line contains a valid URL
+                links.append(line)
 
-        os.remove(x)
-        print(len(links))
+        # Remove the file after processing
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
-    except:
-        await m.reply_text("∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.")
-        if os.path.exists(x):
-            os.remove(x)
+        # Send the number of links found
+        await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤𝐬 𝐅𝐨𝐮𝐧𝐝: {len(links)}**")
+
+        # Process the links (you can add your logic here)
+        for link in links:
+            # Example: Print the link (replace with your logic)
+            print(f"Processing link: {link}")
+
+        await m.reply_text("✅ **All links have been processed successfully.**")
+
+    except Exception as e:
+        await m.reply_text(f"❌ An error occurred: {str(e)}")
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
     await editable.edit(f"∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐚𝐥 𝐢𝐬 **1**")
     input0: Message = await bot.listen(editable.chat.id)

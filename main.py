@@ -49,7 +49,7 @@ cookies_file_path = os.getenv("COOKIES_FILE_PATH", "youtube_cookies.txt")
 # File paths
 SUBSCRIPTION_FILE = "subscription_data.txt"
 CHANNELS_FILE = "channels_data.txt"
-ADMIN_ID = 5957208798
+ADMIN_ID = "5957208798"
 
 # Image URLs for the random image feature
 image_urls = [
@@ -110,10 +110,6 @@ def read_channels_data():
 
 def is_admin(user_id: int) -> bool:
     """Checks if a user is an admin."""
-    return user_id == ADMIN_ID
-    
-# Function to check if the user is admin
-def is_admin(user_id):
     return user_id == ADMIN_ID
 
 # Add user command (Admin Only)

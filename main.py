@@ -174,46 +174,57 @@ async def stop_handler(client, message: Message):
 
 # Engineer command handler
 @bot.on_message(filters.command("Engineer"))
-async def Engineer_handler(client: Client, message: Message):
+async def engineer_handler(client: Client, message: Message):
+    user_id = str(message.from_user.id)
+    chat_id = str(message.chat.id)
+    
+    # Check if user is a premium subscriber (for private chats)
     if message.chat.type == "private":
-        user_id = str(message.from_user.id)
         subscription_data = read_subscription_data()
         if not any(user[0] == user_id for user in subscription_data):
             await message.reply_text("❌ You are not a premium user. Please upgrade your subscription! 💎")
             return
     else:
+        # Check if chat is a premium channel
         channels = read_channels_data()
-        if str(message.chat.id) not in channels:
+        if chat_id not in channels:
             await message.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-            
-    if is_admin(message.from_user.id):
-        editable = await message.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
-        input: Message = await bot.listen(editable.chat.id)
-        x = await input.download()
-        await input.delete(True)
     
-        path = f"./downloads/{message.chat.id}"
+    # Check if the user is an admin
+    if not is_admin(message.from_user.id):
+        await message.reply_text("🚫 You do not have permission to use this command.")
+        return
     
-        try:
-            file_name = os.path.basename(x)
-            raw_text0 = os.path.splitext(file_name)[0]
+    # Ask for a file
+    editable = await message.reply_text("𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄")
+    input_message: Message = await client.listen(editable.chat.id)
     
-            with open(x, "r") as f:
-                content = f.read()
-            content = content.split("\n")
-            links = []
-            for i in content:
-                links.append(i.split("://", 1))
+    if not input_message.document:
+        await message.reply_text("❌ Invalid input. Please send a valid text file.")
+        return
     
-            print(f"Extracted file name: {raw_text0}")
+    # Download file
+    file_path = await input_message.download()
+    await input_message.delete()
     
-            os.remove(x)
+    try:
+        file_name = os.path.basename(file_path)
+        raw_text0 = os.path.splitext(file_name)[0]
+        
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read().split("\n")
+        
+        links = [line.split("://", 1) for line in content if "://" in line]
+        
+        print(f"Extracted file name: {raw_text0}")
     
-        except Exception as e:
-            await message.reply_text(f"**∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭 𝐨𝐫 𝐞𝐫𝐫𝐨𝐫: {str(e)}**")
-            os.remove(x)
-            return
+    except Exception as e:
+        await message.reply_text(f"**❌ Error processing file: {str(e)}**")
+    
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
         
     await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤 𝐅𝐨𝐮𝐧𝐝 𝐀𝐫𝐞 🔗** **{len(links)}**\n\n**𝐒𝐞𝐧𝐝 𝐅𝐫𝐨𝐦 𝐖𝐡𝐞𝐫𝐞 𝐘𝐨𝐮 𝐖𝐚𝐧𝐭 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐈𝐧𝐢𝐭𝐢𝐚𝐥 𝐢𝐬** **1**")
     input0: Message = await bot.listen(editable.chat.id)

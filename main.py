@@ -216,7 +216,7 @@ def write_channels_data(data):
 # Admin-only decorator
 def admin_only(func):
     async def wrapper(client, message: Message):
-        if message.from_user.id != YOUR_ADMIN_ID:
+        if message.from_user.id != 5957208798:
             await message.reply_text("You are not authorized to use this command.")
             return
         await func(client, message)
@@ -409,8 +409,8 @@ async def stop_handler(client, message: Message):
     await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-@bot.on_message(filters.command("moni"))
-async def moni_handler(client: Client, m: Message):
+@bot.on_message(filters.command("Engineer"))
+async def Engineer_handler(client: Client, m: Message):
     if m.chat.type == "private":
         user_id = str(m.from_user.id)
         subscription_data = read_subscription_data()

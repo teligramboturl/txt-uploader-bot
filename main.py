@@ -176,7 +176,8 @@ async def Engineer_handler(client: Client, message: Message):
         if str(message.chat.id) not in channels:
             await message.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-
+    else:
+        if is_admin(message.from_user.id):
     editable = await message.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄')
     input: Message = await bot.listen(editable.chat.id)
     x = await input.download()

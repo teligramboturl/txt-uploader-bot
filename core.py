@@ -329,4 +329,113 @@ async def send_vid(bot: Client, m: Message,cc,filename,thumb,name,prog):
 
     os.remove(f"{filename}.jpg")
     await reply.delete (True)
+
+# helper.py
+async def download_and_send_video(url, name, chat_id, bot, log_channel_id, accept_logs, caption, m):
+    """
+    Downloads a video from a URL and sends it to the specified chat.
+    Handles encrypted video URLs differently if needed.
+    """
+    try:
+        # Check if the URL is for an encrypted video
+        if "encrypted" in url:
+            # Add specific handling for encrypted videos here if necessary
+            print("Handling encrypted video...")
+        
+        # Download the video
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    video_data = await response.read()
+                    video_path = f"{name}.mp4"
+                    
+                    # Save video to a file
+                    with open(video_path, 'wb') as f:
+                        f.write(video_data)
+                    
+                    # Send the video to the user
+                    message = await bot.send_video(chat_id=chat_id, video=video_path, caption=caption)
+                    
+                    # Log the video to a specific channel if required
+                    if accept_logs == 1:
+                        file_id = message.video.file_id
+                        await bot.send_video(chat_id=log_channel_id, video=file_id, caption=caption)
+                    
+                    # Cleanup: Remove the video file after sending
+                    os.remove(video_path)
+                else:
+                    await m.reply_text(f"Failed to download video. Status code: {response.status}")
+    except Exception as e:
+        await m.reply_text(f"An error occurred: {str(e)}")
+
+
+
+async def download_video(url,cmd, name):
+    download_cmd = f'{cmd} -R infinite --fragment-retries 25 --socket-timeout 50 --external-downloader aria2c --downloader-args "aria2c: -x 16 -j 32" --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"'
+    global failed_counter   
+    print(download_cmd)
+    logging.info(download_cmd)
+    k = subprocess.run(download_cmd, shell=True)
+    if "visionias" in cmd and k.returncode != 0 and failed_counter <= 10:
+        failed_counter += 1
+        await asyncio.sleep(5)
+        await download_video(url, cmd, name)
+    failed_counter = 0
+    try:
+        if os.path.isfile(name):
+            return name
+        elif os.path.isfile(f"{name}.webm"):
+            return f"{name}.webm"
+        name = name.split(".")[0]
+        if os.path.isfile(f"{name}.mkv"):
+            return f"{name}.mkv"
+        elif os.path.isfile(f"{name}.mp4"):
+            return f"{name}.mp4"
+        elif os.path.isfile(f"{name}.mp4.webm"):
+            return f"{name}.mp4.webm"
+
+        return name
+    except FileNotFoundError as exc:
+        return os.path.isfile.splitext[0] + "." + "mp4"
+
+
+async def send_doc(bot: Client, m: Message,cc,ka,cc1,prog,count,name):
+    reply = await m.reply_text(f"Uploading » `{name}`")
+    time.sleep(1)
+    start_time = time.time()
+    await m.reply_document(ka,caption=cc1)
+    count+=1
+    await reply.delete (True)
+    time.sleep(1)
+    os.remove(ka)
+    time.sleep(3) 
+
+
+async def send_vid(bot: Client, m: Message,cc,filename,thumb,name,prog):
     
+    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:12 -vframes 1 "{filename}.jpg"', shell=True)
+    await prog.delete (True)
+    reply = await m.reply_text(f"**⥣ Uploading...** » `{name}`")
+    try:
+        if thumb == "no":
+            thumbnail = f"{filename}.jpg"
+        else:
+            thumbnail = thumb
+    except Exception as e:
+        await m.reply_text(str(e))
+
+    dur = int(duration(filename))
+
+    start_time = time.time()
+
+    try:
+        await m.reply_video(filename,caption=cc, supports_streaming=True,height=720,width=1280,thumb=thumbnail,duration=dur, progress=progress_bar,progress_args=(reply,start_time))
+    except Exception:
+        await m.reply_document(filename,caption=cc, progress=progress_bar,progress_args=(reply,start_time))
+
+    
+    os.remove(filename)
+
+    os.remove(f"{filename}.jpg")
+    await reply.delete (True)
+

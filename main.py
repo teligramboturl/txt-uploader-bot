@@ -356,11 +356,12 @@ async def remove_channel(client, message: Message):
     except ValueError:
         await message.reply_text("Invalid command format. Use: /remove_channels <channel_id>")
 
-#YOUR_ADMIN_ID = 5957208798
+YOUR_ADMIN_ID = 5548106944
 
 # Helper function to check admin privilege
-#def is_admin(user_id):
-    #return user_id == YOUR_ADMIN_ID
+def is_admin(user_id):
+    return user_id == YOUR_ADMIN_ID
+
 # Command to show all allowed channels (Admin only)
 @bot.on_message(filters.command("allowed_channels"))
 async def allowed_channels(client, message: Message):
@@ -377,6 +378,7 @@ async def allowed_channels(client, message: Message):
     else:
         await message.reply_text("ℹ️ No channels are currently allowed.")
 
+# Command to remove all channels (Admin only)
 @bot.on_message(filters.command("remove_all_channels"))
 async def remove_all_channels(client, message: Message):
     user_id = message.from_user.id
@@ -389,6 +391,8 @@ async def remove_all_channels(client, message: Message):
     write_channels_data([])
     await message.reply_text("✅ **All channels have been removed successfully.**")
 
+
+# 6. /stop
 @bot.on_message(filters.command("stop"))
 async def stop_handler(client, message: Message):
     if message.chat.type == "private":
@@ -403,11 +407,11 @@ async def stop_handler(client, message: Message):
             await message.reply_text("🚫 You are not a premium user. Subscribe to unlock all features! ✨")
             return
 
-    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️", True)
+    await message.reply_text("♦️ 𝐒𝐭𝐨𝐩𝐩𝐞𝐝 ♦️" , True)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-@bot.on_message(filters.command("Engineer"))
-async def Engineer_handler(client: Client, m: Message):
+@bot.on_message(filters.command("moni"))
+async def moni_handler(client: Client, m: Message):
     if m.chat.type == "private":
         user_id = str(m.from_user.id)
         subscription_data = read_subscription_data()
@@ -419,24 +423,26 @@ async def Engineer_handler(client: Client, m: Message):
         if str(m.chat.id) not in channels:
             await m.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
             return
-
+            
     editable = await m.reply_text('𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 ⏍')
 
     try:
-        # Wait for the user to send a file
-        input_message: Message = await client.listen(m.chat.id)
+        input: Message = await client.listen(editable.chat.id)
         
         # Check if the message contains a document and is a .txt file
-        if not input_message.document or not input_message.document.file_name.endswith('.txt'):
-            await m.reply_text("❌ Please send a valid .txt file.")
+        if not input.document or not input.document.file_name.endswith('.txt'):
+            await m.reply_text("Please send a valid .txt file.")
             return
 
         # Download the file
-        file_path = await input_message.download(file_name="./downloads/")
-        await input_message.delete()
+        x = await input.download()
+        await input.delete(True)
+
+        path = f"./downloads/{m.chat.id}"
+        file_name = os.path.splitext(os.path.basename(x))[0]
 
         # Read and process the file
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(x, "r") as f:
             content = f.read().strip()
 
         lines = content.splitlines()
@@ -444,12 +450,18 @@ async def Engineer_handler(client: Client, m: Message):
 
         for line in lines:
             line = line.strip()
-            if line and "://" in line:  # Ensure the line contains a valid URL
-                links.append(line)
+            if line:
+                link = line.split("://", 1)
+                if len(link) > 1:
+                    links.append(link)
 
-        # Remove the file after processing
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        os.remove(x)
+        print(len(links))
+
+    except:
+        await m.reply_text("∝ 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐟𝐢𝐥𝐞 𝐢𝐧𝐩𝐮𝐭.")
+        if os.path.exists(x):
+            os.remove(x)
 
         # Send the number of links found
         await editable.edit(f"**∝ 𝐓𝐨𝐭𝐚𝐥 𝐋𝐢𝐧𝐤𝐬 𝐅𝐨𝐮𝐧𝐝: {len(links)}**")

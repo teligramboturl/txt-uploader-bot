@@ -105,82 +105,199 @@ async def main():
     except (KeyboardInterrupt, SystemExit):
         await stop_bot()
         
-class Data:
-    START = (
-        "🌟 Welcome {0}! 🌟\n\n"
-    )
-# Define the start command handler
-@bot.on_message(filters.command("start"))
-async def start(client: Client, msg: Message):
-    user = await client.get_me()
-    mention = user.mention
-    start_message = await client.send_message(
-        msg.chat.id,
-        Data.START.format(msg.from_user.mention)
+# Image URLs for the random image feature
+image_urls = [
+    "https://i.postimg.cc/t428ZHY7/02.webp",
+    "https://i.postimg.cc/6QkC6yLK/03.webp",
+    "https://i.postimg.cc/fbdNhHf8/04.webp",
+    "https://i.postimg.cc/yxMGnKwB/05.webp",
+    "https://i.postimg.cc/50ddnwvD/06.webp",
+    "https://i.postimg.cc/wT7zxT6f/07.webp",
+    "https://i.postimg.cc/pVk0GfM4/08.webp",
+    "https://i.postimg.cc/1tBLrbKY/09.webp",
+]
+
+# Define the caption
+caption = (
+    "**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫👋!**\n\n"
+    "➠ **𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ♥️**\n"
+    "➠ **Can Extract Videos & PDFs From Your Text File and Upload to Telegram!**\n"
+    "➠ **For Guide Use Command /guide 📖**\n"
+    "➠ **Use /Engineer Command to Download From TXT File** 📄\n"
+    "➠ **𝐌𝐚𝐝𝐞 𝐁𝐲:** @Engineers_Babu"
+)
+
+# Inline keyboard for start command
+keyboard = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton(text="📞 Contact", url="https://t.me/Engineers_Babu"),
+            InlineKeyboardButton(text="🛠️ Help", url="https://t.me/Engineers_Babu"),
+        ],
+        [
+            InlineKeyboardButton(text="🪄 Updates Channel", url="https://t.me/Engineersbabuupdates"),
+        ],
+    ]
+)
+
+# File paths
+SUBSCRIPTION_FILE = "subscription_data.txt"
+CHANNELS_FILE = "channels_data.txt"
+ADMIN_ID = 5957208798  # Replace with your admin ID
+
+# Initialize the bot
+bot = Client("my_bot")
+
+def read_subscription_data():
+    """Reads and returns the subscription data."""
+    try:
+        with open(SUBSCRIPTION_FILE, "r", encoding="utf-8") as f:
+            return [line.strip().split(",") for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        return []
+
+def read_channels_data():
+    """Reads and returns the channel data."""
+    try:
+        with open(CHANNELS_FILE, "r", encoding="utf-8") as f:
+            return [line.strip() for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        return []
+
+def is_admin(user_id: int) -> bool:
+    """Checks if a user is an admin."""
+    return user_id == ADMIN_ID
+
+# Start command handler
+@bot.on_message(filters.command(["start"]))
+async def start_command(client: Client, message: Message):
+    random_image_url = random.choice(image_urls)
+    await client.send_photo(
+        chat_id=message.chat.id,
+        photo=random_image_url,
+        caption=caption,
+        reply_markup=keyboard,
     )
 
-    await asyncio.sleep(1)
-    await start_message.edit_text(
-        Data.START.format(msg.from_user.mention) +
-        "Initializing Uploader bot... 🤖\n\n"
-        "Progress: [⬜⬜⬜⬜⬜⬜⬜⬜⬜] 0%\n\n"
-    )
+# Add user command (Admin Only)
+@bot.on_message(filters.command("adduser") & filters.private)
+async def add_user(client: Client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to use this command.")
+        return
+    try:
+        _, user_id, expiration_date = message.text.split()
+        with open(SUBSCRIPTION_FILE, "a", encoding="utf-8") as f:
+            f.write(f"{user_id},{expiration_date}\n")
+        await message.reply_text(f"User {user_id} added with expiration date {expiration_date}.")
+    except ValueError:
+        await message.reply_text("Invalid format. Use: /adduser <user_id> <expiration_date>")
 
-    await asyncio.sleep(1)
-    await start_message.edit_text(
-        Data.START.format(msg.from_user.mention) +
-        "Loading features... ⏳\n\n"
-        "Progress: [🟥🟥🟥⬜⬜⬜⬜⬜⬜] 25%\n\n"
-    )
-    
-    await asyncio.sleep(1)
-    await start_message.edit_text(
-        Data.START.format(msg.from_user.mention) +
-        "This may take a moment, sit back and relax! 😊\n\n"
-        "Progress: [🟧🟧🟧🟧🟧⬜⬜⬜⬜] 50%\n\n"
-    )
+# Remove user command (Admin Only)
+@bot.on_message(filters.command("removeuser") & filters.private)
+async def remove_user(client: Client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to use this command.")
+        return
+    try:
+        _, user_id = message.text.split()
+        lines = read_subscription_data()
+        with open(SUBSCRIPTION_FILE, "w", encoding="utf-8") as f:
+            for line in lines:
+                if line[0] != user_id:
+                    f.write(f"{line[0]},{line[1]}\n")
+        await message.reply_text(f"User {user_id} removed.")
+    except ValueError:
+        await message.reply_text("Invalid format. Use: /removeuser <user_id>")
 
-    await asyncio.sleep(1)
-    await start_message.edit_text(
-        Data.START.format(msg.from_user.mention) +
-        "Checking Bot Status... 🔍\n\n"
-        "Progress: [🟨🟨🟨🟨🟨🟨🟨⬜⬜] 75%\n\n"
-    )
+# Show users command (Admin Only)
+@bot.on_message(filters.command("users") & filters.private)
+async def show_users(client: Client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to use this command.")
+        return
+    subscription_data = read_subscription_data()
+    if subscription_data:
+        users_list = "\n".join([f"🆔 {user[0]} | 📅 {user[1]}" for user in subscription_data])
+        await message.reply_text(f"👥 Subscribed Users:\n{users_list}")
+    else:
+        await message.reply_text("ℹ️ No users found.")
 
-    await asyncio.sleep(1)
-    await start_message.edit_text(
-        Data.START.format(msg.from_user.mention) +
-        "Checking status Ok... Command Nhi Bataunga **Bot Made BY 𝐀𝐍𝐊𝐈𝐓 𝐒𝐇𝐀𝐊𝐘𝐀™👨🏻‍💻**🔍\n\n"
-        "Progress:[🟩🟩🟩🟩🟩🟩🟩🟩🟩] 100%\n\n"
-    )
+# My plan command handler
+@bot.on_message(filters.command("myplan") & filters.private)
+async def my_plan(client: Client, message: Message):
+    user_id = str(message.from_user.id)
+    if is_admin(message.from_user.id):
+        await message.reply_text("✨ You have permanent access!")
+        return
+    subscription_data = read_subscription_data()
+    for user in subscription_data:
+        if user[0] == user_id:
+            await message.reply_text(f"📅 Your Plan:\n🆔 User ID: {user_id}\n⏳ Expiration Date: {user[1]}\n🔒 Status: Active")
+            return
+    await message.reply_text("❌ You are not a premium user.")
 
-@bot.on_message(filters.command(["stop"]) )
-async def restart_handler(_, m):
-    await m.reply_text("**STOPPED**🛑", True)
+# Stop bot command (Admin Only)
+@bot.on_message(filters.command("stop") & filters.private)
+async def stop_handler(client: Client, message: Message):
+    if not is_admin(message.from_user.id):
+        await message.reply_text("❌ You are not authorized to stop the bot.")
+        return
+    await message.reply_text("🛑 Bot is shutting down...")
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-
-@bot.on_message(filters.command(["ankit","upload"]) )
-async def txt_handler(bot: Client, m: Message):
-    editable = await m.reply_text(f"**🔹Hi I am Poweful TXT Downloader📥 Bot.**\n🔹**Send me the TXT file and wait.**")
-    input: Message = await bot.listen(editable.chat.id)
-    x = await input.download()
-    await input.delete(True)
-    file_name, ext = os.path.splitext(os.path.basename(x))
-    credit = f"𝐀𝐍𝐊𝐈𝐓 𝐒𝐇𝐀𝐊𝐘𝐀™🇮🇳"
-    token = f"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYxNTE3MzAuMTI2LCJkYXRhIjp7Il9pZCI6IjYzMDRjMmY3Yzc5NjBlMDAxODAwNDQ4NyIsInVzZXJuYW1lIjoiNzc2MTAxNzc3MCIsImZpcnN0TmFtZSI6IkplZXYgbmFyYXlhbiIsImxhc3ROYW1lIjoic2FoIiwib3JnYW5pemF0aW9uIjp7Il9pZCI6IjVlYjM5M2VlOTVmYWI3NDY4YTc5ZDE4OSIsIndlYnNpdGUiOiJwaHlzaWNzd2FsbGFoLmNvbSIsIm5hbWUiOiJQaHlzaWNzd2FsbGFoIn0sImVtYWlsIjoiV1dXLkpFRVZOQVJBWUFOU0FIQEdNQUlMLkNPTSIsInJvbGVzIjpbIjViMjdiZDk2NTg0MmY5NTBhNzc4YzZlZiJdLCJjb3VudHJ5R3JvdXAiOiJJTiIsInR5cGUiOiJVU0VSIn0sImlhdCI6MTczNTU0NjkzMH0.iImf90mFu_cI-xINBv4t0jVz-rWK1zeXOIwIFvkrS0M"
-    try:    
-        with open(x, "r") as f:
-            content = f.read()
-        content = content.split("\n")
-        links = []
-        for i in content:
-            links.append(i.split("://", 1))
-        os.remove(x)
-    except:
-        await m.reply_text("Invalid file input.")
-        os.remove(x)
+# Engineer command handler
+@bot.on_message(filters.command("Engineer"))
+async def engineer_handler(client: Client, message: Message):
+    user_id = str(message.from_user.id)
+    chat_id = str(message.chat.id)
+    
+    # Check if user is a premium subscriber (for private chats)
+    if message.chat.type == "private":
+        subscription_data = read_subscription_data()
+        if not any(user[0] == user_id for user in subscription_data):
+            await message.reply_text("❌ You are not a premium user. Please upgrade your subscription! 💎")
+            return
+    else:
+        # Check if chat is a premium channel
+        channels = read_channels_data()
+        if chat_id not in channels:
+            await message.reply_text("❗ You are not a premium user. Subscribe now for exclusive access! 🚀")
+            return
+    
+    # Check if the user is an admin
+    if not is_admin(message.from_user.id):
+        await message.reply_text("🚫 You do not have permission to use this command.")
         return
+    
+    # Ask for a file
+    editable = await message.reply_text("𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐀 𝐓𝐱𝐭 𝐅𝐢𝐥𝐞 𝐒𝐞𝐧𝐝 𝐇𝐞𝐫𝐞 📄")
+    input_message: Message = await client.listen(editable.chat.id)
+    
+    if not input_message.document:
+        await message.reply_text("❌ Invalid input. Please send a valid text file.")
+        return
+    
+    # Download file
+    file_path = await input_message.download()
+    await input_message.delete()
+    
+    try:
+        file_name = os.path.basename(file_path)
+        raw_text0 = os.path.splitext(file_name)[0]
+        
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.readlines()
+        
+        links = [line.strip() for line in content if "://" in line]
+        print(f"Extracted file name: {raw_text0}")
+        
+    except Exception as e:
+        await message.reply_text(f"**❌ Error processing file: {str(e)}**")
+    
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
    
     await editable.edit(f"Total links found are **{len(links)}**\n\nSend From where you want to download initial is **1**")
     input0: Message = await bot.listen(editable.chat.id)

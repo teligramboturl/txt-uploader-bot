@@ -363,8 +363,8 @@ async def txt_handler(bot: Client, m: Message):
 
             try:  
                 
-                cc = f'**🎞️ VID_ID: {str(count).zfill(3)}.\n\n📝 Title: {name1} {centered_text} {res}.mkv\n\n📚 Batch Name: {b_name}\n\n📥 Extracted By : {CR}\n\n**━━━━━✦{centered_text}✦━━━━━**'
-                cc1 = f'**📁 PDF_ID: {str(count).zfill(3)}.\n\n📝 Title: {name1} {centered_text}.pdf\n\n📚 Batch Name: {b_name}\n\n📥 Extracted By : {CR}\n\n**━━━━━✦{centered_text}✦━━━━━**'
+                cc = f'**🎞️ VID_ID: {str(count).zfill(3)}.\n\n📝 Title: {name1} {my_name} {res}.mkv\n\n📚 Batch Name: {b_name}\n\n📥 Extracted By : {CR}\n\n**━━━━━✦{centered_text}✦━━━━━**'
+                cc1 = f'**📁 PDF_ID: {str(count).zfill(3)}.\n\n📝 Title: {name1} {my_name}.pdf\n\n📚 Batch Name: {b_name}\n\n📥 Extracted By : {CR}\n\n**━━━━━✦{centered_text}✦━━━━━**'
                     
                 
                 if "drive" in url:
@@ -426,7 +426,7 @@ async def txt_handler(bot: Client, m: Message):
                         continue                       
                           
                 else:
-                    Show = f"❊⟱ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 ⟱❊ »\n\n📄 Title:- `{name}\n\n⌨ 𝐐𝐮𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**🔗 𝐔𝐑𝐋 »** `{url}`\n\n**𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ ᴀɴᴋɪᴛ sʜᴀᴋʏᴀ"
+                    Show = f"❊⟱ 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐢𝐧𝐠 ⟱❊ »\n\n📄 Title:- `{name}\n\n⌨ 𝐐𝐮𝐥𝐢𝐭𝐲 » {raw_text2}`\n\n**🔗 𝐔𝐑𝐋 »** `{url}`\n\n**𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦{my_name}"
                     prog = await m.reply_text(Show)
                     res_file = await helper.download_video(url, cmd, name)
                     filename = res_file

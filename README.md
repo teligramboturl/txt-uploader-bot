@@ -10,5 +10,8 @@
 ```
 start - 🦋 Checking Bot Live Or Not
 stop - 🔥 Stop Uploading Process
-upload - ➕ Upload Your Downloaded Txt File
+rajesh - ➕ Upload Your Downloaded Txt File
+mahar - ➕ Upload Your Downloaded Txt File
+txt - ➕ Upload Your Downloaded Txt File
+txt1 - ➕ Upload Your Downloaded Txt File
 ```

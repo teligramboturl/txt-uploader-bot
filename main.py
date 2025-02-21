@@ -150,8 +150,16 @@ async def start(client: Client, msg: Message):
     await asyncio.sleep(1)
     await start_message.edit_text(
         Data.START.format(msg.from_user.mention) +
-        "Checking status Ok... Command Nhi Bataunga **Bot Made BY Rajesh Mahar 🕊️🕊️**🔍\n\n"
-        "Progress:[🟩🟩🟩🟩🟩🟩🟩🟩🟩] 100%\n\n"
+        "Checking status Ok... \n\n I Am A Bot For Download Files From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /rajesh,/mahar,/upload,/txt,/txt1, Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task **Bot Made BY Rajesh Mahar 🕊️🕊️**🔍\n\n"
+        "Progress:[🟩🟩🟩🟩🟩🟩🟩🟩🟩] 100%\n\n", reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("✜ Join Update Channel✜" ,url=f"https://t.me/+ovw8WwlIcWZmYTdl") ],
+                    [
+                    InlineKeyboardButton("✜ Rajesh R Mahar ✜" ,url="https://t.me/rajrmahar") ],
+                    [
+                    InlineKeyboardButton("FOLLOW " ,url="https://www.instagram.com/rajrmahar") ]                               
+            ])
     )
 
 @bot.on_message(filters.command(["stop"]) )

@@ -154,7 +154,7 @@ async def start(client: Client, msg: Message):
         "Progress:[🟩🟩🟩🟩🟩🟩🟩🟩🟩] 100%\n\n", reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("✜ Join Update Channel✜" ,url=f"https://t.me/+ovw8WwlIcWZmYTdl") ],
+                    InlineKeyboardButton("✜ Join Update Channel✜" ,url=f"https://t.me/+T4CxZVremWUzZmI1") ],
                     [
                     InlineKeyboardButton("✜ Rajesh R Mahar ✜" ,url="https://t.me/rajrmahar") ],
                     [

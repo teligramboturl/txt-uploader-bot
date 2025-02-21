@@ -107,15 +107,7 @@ async def main():
         
 class Data:
     START = (
-        "<b>Hello {m.from_user.mention} 👋\n\n I Am A Bot For Download Files From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task.</b>", reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("✜ Join Update Channel✜" ,url=f"https://t.me/+ovw8WwlIcWZmYTdl") ],
-                    [
-                    InlineKeyboardButton("✜ Rajesh R Mahar ✜" ,url="https://t.me/rajrmahar") ],
-                    [
-                    InlineKeyboardButton("FOLLOW " ,url="https://www.instagram.com/rajrmahar") ]                               
-            ])
+        "<b>Hello {m.from_user.mention} 👋\n\n I Am A Bot For Download Files From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task.</b>"
     )
 # Define the start command handler
 @bot.on_message(filters.command("start"))

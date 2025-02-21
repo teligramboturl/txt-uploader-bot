@@ -107,7 +107,7 @@ async def main():
         
 class Data:
     START = (
-        "<b>Hello {m.from_user.mention} 👋\n\n I Am A Bot For Download Files From Your **.TXT** File And Then Upload That File On Telegram So Basically If You Want To Use Me First Send Me /upload Command And Then Follow Few Steps..\n\nUse /stop to stop any ongoing task.</b>"
+        "🌟 Welcome {0}! 🌟\n\n"
     )
 # Define the start command handler
 @bot.on_message(filters.command("start"))
